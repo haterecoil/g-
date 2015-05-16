@@ -3,14 +3,18 @@ var Go = dejavu.Class.declare({
 	model: null,
 	view: null,
 	controller: null,
-	taille: null,
-	jouerAQuiCestLeTour: null,
+	size: null,
+	currentPlayer: null,
 	
-	initialize: function(M,V,C,taille) {
+	initialize: function(M,V,C,size) {
+		this.size = size;
 		this.model = new M(this);
 		this.view = new V(this);
 		this.controller = new C(this);
-		this.taille = taille;
-		this.joueurAQuiCestLeTour = 0;
+		this.currentPlayer = 1;
+	},
+	
+	changeCurrentPlayer: function () {
+		this.currentPlayer = (this.currentPlayer-1+1)%2+1; // 2 <-> 1
 	}
 });

@@ -1,27 +1,5 @@
 {
 	"latedef": false,
 	"undef": false,
-	"unused": false,
-	"predef": [
-		"dejavu",
-		"Go",
-		"Go_MvcComponent",
-		"Go_Controller",
-		"Go_Controller_Client",
-		"Go_Model",
-		"Go_Model_Standard",
-		"Go_View",
-		"Go_View_HTML"
-	],
-	"globals": [
-		"dejavu",
-		"Go",
-		"Go_MvcComponent",
-		"Go_Controller",
-		"Go_Controller_Client",
-		"Go_Model",
-		"Go_Model_Standard",
-		"Go_View",
-		"Go_View_HTML"
-	]
+	"unused": false
 }
