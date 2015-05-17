@@ -5,7 +5,6 @@ var Go_View_HTML = dejavu.Class.declare({
 	
 	render: function() {
 		var goban = this.go.model.getGoban();
-		console.log(goban);
 		$('body').empty();
 		$pre = $('<pre></pre>');
 		for (var y = 0; y<goban.length; y++)

@@ -22,6 +22,20 @@ var Go_Model_Standard = dejavu.Class.declare({
 		return this.goban;	
 	},
 	
+	// du top left dans le sens horaire
+	// @todo vérif bordures
+	// @todo classe "pierre" / "emplacement" ? et on retourne ces objets-là ?
+	getNeighbours: function(x,y) {
+		return [	this.goban[x-1][y-1],
+					this.goban[x  ][y-1],
+					this.goban[x+1][y-1],
+					this.goban[x+1][y  ],
+					this.goban[x+1][y+1],
+					this.goban[x  ][y+1],
+					this.goban[x-1][y+1],
+					this.goban[x-1][y  ] ];
+	}
+	
 	placeStone : function(x,y) {
 		this.goban[x][y] = this.go.currentPlayer;	
 	},
