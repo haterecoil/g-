@@ -62,14 +62,12 @@ var Go_Controller = dejavu.Class.declare({
 	 * @return {Boolean}   true : the cell has at least one liberty, false : no liberty
 	 */
 	hasLiberty : function(neighbours){
-		var liberty = false;
 		neighbours.forEach(function(e){
 			if (e.state == 0 ) {
-				liberty = true;
-				break;
+				return true;
 			}
 		});
-		return liberty;
+		return false;
 	},
 	/**
 	 * 				#TODO : ce n'est pas sécurisé, vaut mieux placer ces actions au sein même 
@@ -106,6 +104,19 @@ var Go_Controller = dejavu.Class.declare({
 	},
 	returnError : function(string){
 		return string;
+	},
+  capturePossible : function (curr, prev){
+	var prev = null || prev;
+	if (hasLiberty(curr)) return false
+	getNeighbours(curr).forEach(function (neighbour){
+		//si la cellule voisine est occupée et que c'est l'inverse de nous
+		if ( neighbour.state == 1 && neighbour.owner != go.currPlayer ) {
+			if ( neighbour.coords != prev ) {
+				return capturePossible(neighbour.coords, curr);
+			} 
+		}
+	});
+	return true;
 	}
 
 
@@ -114,6 +125,29 @@ var Go_Controller = dejavu.Class.declare({
 
 	
 });
+
+
+Input : F, 2, W
+Neigh : F1Ø, mur, F3B, E2B
+SI voisin noir _qui n est pas précédent(retry)
+SINON SI Voisin Vide
+
+curr : [x, y]
+prev : [x, y]
+
+function capturePossible(curr, prev){
+	var prev = null || prev;
+	if (hasLiberty(curr)) return false
+	getNeighbours(curr).forEach(function (neighbour){
+		//si la cellule voisine est occupée et que c'est l'inverse de nous
+		if ( neighbour.state == 1 && neighbour.owner != go.currPlayer ) {
+			if ( neighbour.coords != prev ) {
+				return capturePossible(neighbour.coords, curr);
+			} 
+		}
+	});
+	return true;
+}
 
 			/*
 				LISTE DES FONCTIONS  :
