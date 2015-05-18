@@ -11,7 +11,7 @@ var Go_View_HTML = dejavu.Class.declare({
 		{
 			for (var x = 0; x<goban[0].length; x++)
 			{
-				$pre.append(goban[x][y]);
+				$pre.append(goban[x][y].getOwner());
 			}
 			$pre.append('\n');
 		}

@@ -4,35 +4,40 @@ var Go_Controller = dejavu.Class.declare({
 	// todo fonctions statiques?
 
 	placeStone: function(x,y) {
-		if (this.go.model.isEmpty(x,y)) //ask Model "Is this case empty ?"
+		//ask Model "Is this case empty ?"
+		if ( this.go.model.getIntersection(x, y).isEmpty() ) 
 		{
-			
-
 			// dans le modèle on place la pierre, ce qui permet de faire comme si elle était placée
 			// quitte à l'enlever plus tard
-			this.go.model.setStone(x, y); // @todo ne placer la stone que si elle doit vraiment être placée ?
-			// récupérer depuis M les cases adjacentes
-			// dans M, les cases sont des objets avec .state, .owner, .whatelse?
-			// renvoie un tableau [N,E,S,W]
+		 // @todo ne placer la stone que si elle doit vraiment être placée ?
 			
-			//  si il y a au moins une liberté
+			console.log("coup joué en "+ x +" "+ y);
+			//met la pierre dans le model, pour simuler sa présence
+			this.go.model.placeStone(x, y);
+
+			//si au mileu de 4 enemis, rejeter la pierre
+			if ( this.neighboursAreEnemies(x,y,this.go.currentPlayer) ) {
+				this.go.model.removeStone(x, y);
+				return;
+			}
+			//  si il y a au moins une liberté...
+			console.log( "liberté de la chaine" +this.chainHasLiberty(x,y,this.go.currentPlayer) );
+					
 			if ( this.chainHasLiberty(x,y,this.go.currentPlayer) ){
-				//placerPierre dans M et dans V
-				this.setStone(x,y);
-
-				if ( this.captureIsPossible(x,y) ){
-
-					// ou this.setStone?
+				
+					// placer la pierre
 					this.go.model.setStone(x, y);
 					this.go.view.queue("setStone", {x, y});
 					
-					this.captureStonesAround(x, y);
-				}
-				
-				this.returnNextPlayer();
+					//voir si ça déclenche une capture
+					if ( this.captureIsPossible(x, y) ){
+						this.captureStonesAround(x, y);				
+						this.returnNextPlayer();	
+					}
+					
 			} else {
-				//si les vosiisn sont des ennemis
-				if ( this.neighboursAreEnnemies() ){
+				//si les voisins sont des ennemis
+				if ( this.neighboursAreEnemies() ){
 					//si une capture est possible
 					if ( this.captureIsPossible() ) {
 						if ( this.noKo ) {
@@ -59,25 +64,60 @@ var Go_Controller = dejavu.Class.declare({
 		}
 		else
 		{ //in cell aint empty
-			this.go.view.error("La case est occupée.");
+			return "La case est occupée.";
 		}
 	},
 	/**
 	 * chainHasLiberty
-	 * Renvoie vrai si une chaîne passant par l'emplacement indiqué supposé appartenant au joueur player a une liberté (et donc s'il est possible selon les règles de placer la pierre ici)
+	 * Renvoie vrai si une chaîne passant par l'emplacement indiqué supposé 
+	 * appartenant au joueur player a une liberté (et donc s'il est possible 
+	 * selon les règles de placer la pierre ici)
 	 * @todo ennemi ko ?
 	 * @param  {[obj]}  neighbours object containing every neighbours of a cell
 	 * @return {Boolean}   true : the cell has at least one liberty, false : no liberty
 	 */
-	chainHasLiberty : function(x, y, player){
+	chainHasLiberty: function(x, y, player){
 		// c'est plus compliqué que ça.
-		var neighbours = this.go.model.getNeighbours(x, y);
-		neighbours.forEach(function(e){
-			if (e.state == 0 ) {
-				return true;
+
+		var visitedArr = [];
+
+		/**
+		 * intersectionVisited returns true if a cell has already been visited
+		 * @param  {array} intersection  [x,y] coords of the cell to check
+		 * @return {bool}    true : cell has been visited
+		 */
+		function intersectionVisited(intersection){
+			for (var i = 0; i < visitedArr.length; i++){
+				if ( intersection[0] === visitedArr[i][0] && intersection[1] === visitedArr[i][1] )
+					return true
 			}
-		});
-		return false;
+			return false;
+		}
+
+		/**
+		 * checkLiberties : each call evaluates liberties of a cell, 
+		 * 	by recursivity it evaluates those of a chain
+		 * @param  {array} cell [x,y] coords
+		 * @return {bool}       true if a cell has a liberty (thus the whole chain has a liberty)
+		 */
+		function checkLiberties(x, y, player){
+			var neighbours = this.go.model.getNeighboursCoords(x, y);
+			//cherche un voisin libre
+			console.log(neighbours);
+					
+			neighbours.forEach(function(coords){
+				var intersection = this.go.model.getIntersection(coords[0], coords[1]);
+				if (intersection.isEmpty()) {  //si voisin est libre
+					return true;
+				} else if (intersection.getOwner() != player) {  //si voisin est pas de son camp
+					visitedArr.push([intersection[0], intersection[1]]);
+					return checkLiberties(intersection[0], intersection[1], curr);
+				}					
+			});
+			return false;
+		}
+
+		return checkLiberties(x, y, player);
 	},
 
 	/**
@@ -86,36 +126,60 @@ var Go_Controller = dejavu.Class.declare({
 	 * @param {[int]} y y position of a cell on the goban
 	 * @return {[type]}   [description]
 	 */
-	captureStonesAround : function(x, y){
+	captureStonesAround: function(x, y){
 		return true;
 	},
-	returnNextPlayer : function(){
+	returnNextPlayer: function(){
 		return true;
 	},
-	neighboursAreEnnemies : function(x, y){
+	/**
+	 * if 4 enemies around intersection, returns true
+	 * @param  {[type]} x      [description]
+	 * @param  {[type]} y      [description]
+	 * @param  {[type]} player [description]
+	 * @return {[type]}        [description]
+	 */
+	neighboursAreEnemies: function(x, y, player){
+		//getNeighbours
+		var neighbours = this.go.model.getNeighbours(x, y);
+		//crawlneighbours
+		var enemies = 0;
+		console.log(neighbours);
+				
+		neighbours.forEach(function(cell){
+			if ( !cell.isEmpty() && cell.getOwner() != player ){
+				enemies++;
+			}
+		});
+		return enemies >= neighbours.length;
+	},
+	noKo: function(x, y){
 		return true;
 	},
-	captureIsPossible : function(x, y){
-		return true;
-	},
-	noKo : function(x, y){
-		return true;
-	},
-	returnError : function(string){
+	returnError: function(string){
 		return string;
 	},
-  capturePossible : function (curr, prev){
-	var prev = null || prev;
-	if (hasLiberty(curr)) return false
-	getNeighbours(curr).forEach(function (neighbour){
-		//si la cellule voisine est occupée et que c'est l'inverse de nous
-		if ( neighbour.state == 1 && neighbour.owner != go.currPlayer ) {
-			if ( neighbour.coords != prev ) {
-				return capturePossible(neighbour.coords, curr);
-			} 
-		}
-	});
-	return true;
+	setStone: function(x, y){
+		this.go.model.placeStone(x, y);
+		this.go.view.render();
+		console.log("stone set : "+ x + " " + y);
+	},
+	isEmpty: function(cell) {
+		return cell.isEmpty();
+	},
+  captureIsPossible : function (currX, currY, prevX, prevY){
+		// var prevX = prevX || -1;
+		// if ( this.chainHasLiberty(currX, currY) ) 
+		// 	return false
+		// this.go.model.getNeighbours(curr).forEach(function (neighbour){
+		// 	//si la cellule voisine est occupée et que c'est l'inverse de nous
+		// 	if ( neighbour.state == 1 && neighbour.owner != go.currPlayer ) {
+		// 		if ( neighbour.coords != prev ) {
+		// 			return captureIsPossible(neighbour.coords, curr);
+		// 		} 
+		// 	}
+		// });
+		return !this.chainHasLiberty(currX, currY);
 	}
 
 
@@ -160,7 +224,7 @@ function capturePossible(curr, prev){
 					capture les pierres autour d'une zone
 				[w]this.returnNextPlayer()
 					joueur suivant
-				[w]this.neighboursAreEnnemies(x, y)
+				[w]this.neighboursAreEnemies(x, y)
 					répond par bool si les voisins d'une case sont des ennemis
 				[w]this.captureIsPossible(x,y)
 					à partir d'une position, décide si une capture est possible
