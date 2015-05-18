@@ -5,6 +5,5 @@ go.view.render();
 
 setTimeout(function() {
 	go.controller.placeStone(3,0);
-	console.log(go.controller.placeStone(3,0));
 			
 },100);

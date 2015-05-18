@@ -7,7 +7,11 @@ var Go_Controller_Client = dejavu.Class.declare({
 		return true;
 	},
 
-	placeStone: function(x,y) {
+	setListeners: function() {
+		
+	}
+
+	/*placeStone: function(x,y) {
 		if (this.$super(x,y))
 		{
 			// envoyer au serveur (via une autre classe ?) l'action qu'on vient de faire : socket emit ('placerPierre',[x,y]);
@@ -25,5 +29,5 @@ var Go_Controller_Client = dejavu.Class.declare({
 		}
 		else
 			return false;
-	}
+	}*/
 });
