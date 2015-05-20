@@ -15,6 +15,6 @@ var Go = dejavu.Class.declare({
 	},
 	
 	changeCurrentPlayer: function () {
-		this.currentPlayer = (this.currentPlayer)%2+1; // 2 <-> 1
+		this.currentPlayer = this.currentPlayer%2+1; // 2 <-> 1
 	}
 });
