@@ -30,16 +30,16 @@ var Go_Controller = dejavu.Class.declare({
 					
 			} else {
 				//si les voisins sont des ennemis
-				if ( this.neighboursAreEnemies() ){
+				if ( this.neighboursAreEnemies(x, y, this.go.currentPlayer) ){
 					//si une capture est possible
-					if ( this.tryCapture() ){
+					if ( this.tryCapture(x, y) ){
 						this.go.model.placeStone(x, y);
 						this.nextPlayer(x, y);
 					} else {
 						this.go.model.removeStone(x, y);
 						console.log("no liberty");
 						//debugger;
-						this.returnError("no liberty");
+						//this.returnError("no liberty");
 					}
 				} else {  // les voisins sont des amis
 					this.go.model.placeStone(x, y);
@@ -199,17 +199,22 @@ var Go_Controller = dejavu.Class.declare({
 	 * @return {[type]}        [description]
 	 */
 	neighboursAreEnemies: function(x, y, player){
-		//getNeighbours
 		var neighbours = this.go.model.getNeighbours(x, y);
-		//crawlneighbours
 		var enemies = 0;
-		console.log(neighbours);
-				
+		console.log("voisins : ");
+			console.log(neighbours);
+					
+		console.log("joueur : " + parseInt(player));
+
 		neighbours.forEach(function(cell){
+			console.log(player);
+					
 			if ( !cell.isEmpty() && cell.getOwner() != player ){
 				enemies++;
 			}
 		});
+		console.log("neighbours are ennemies ? " + (enemies >= neighbours.length))
+				
 		return enemies >= neighbours.length;
 	},
 	noKo: function(x, y){
@@ -271,13 +276,6 @@ var Go_Controller = dejavu.Class.declare({
 
 		//si oui et que no ko alors capture
 		return success;
-	},
-
-	testCapture: function(){
-		this.go.model.getIntersection(3,0).setOwner(1);
-		this.go.model.getIntersection(2,0).setOwner(2);
-		this.go.model.getIntersection(4,0).setOwner(2);
-		this.go.view.render();
 	}
 
 
