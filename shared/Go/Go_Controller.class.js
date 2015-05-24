@@ -1,22 +1,13 @@
 //en bas, dictionnaire des fonctions
 var Go_Controller = dejavu.Class.declare({
 	$extends: Go_MvcComponent,
-	// todo fonctions statiques?
+	// @todo fonctions statiques?
 
 	placeStone: function(x,y) {
-		//ask Model "Is this case empty ?"
-		if ( this.go.model.getIntersection(x, y).isEmpty() ) 
+		if ( this.go.model.getIntersection(x,y).isEmpty() ) 
 		{
-			// dans le modèle on place la pierre, ce qui permet de faire comme si elle était placée
-			// quitte à l'enlever plus tard
-		 // @todo ne placer la stone que si elle doit vraiment être placée ?
-			
-			console.log("coup joué en "+ x +" "+ y);
-			//met la pierre dans le model, pour simuler sa présence
-			this.go.model.placeStone(x, y);
-
-			//  si il y a au moins une liberté...
-			//console.log( "liberté de la chaine " +this.chainHasLiberty(x,y,this.go.currentPlayer) );
+			// si il y a au moins une liberté...
+			// console.log( "liberté de la chaine " +this.chainHasLiberty(x,y,this.go.currentPlayer) );
 			if ( this.chainHasLiberty(x,y,this.go.currentPlayer) ){
 				
 					// placer la pierre
@@ -25,23 +16,24 @@ var Go_Controller = dejavu.Class.declare({
 							
 					//voir si ça déclenche une capture
 					this.tryCapture(x, y);
-					this.nextPlayer(x, y);
+					this.nextPlayer();
 					
 					
 			} else {
 				//si les voisins sont des ennemis
-				if ( this.neighboursAreEnemies(x, y, this.go.currentPlayer) ){
+				if ( this.neighboursAreEnemies(x, y, this.go.currentPlayer) ){ // @todo this.neighboursBelongTo ? @todo faire en sorte que le code ne dépende pas du joueur actuel et soit générique (player passé en argument, pas de concept d'ennemi) ?
 					//si une capture est possible
 					if ( this.tryCapture(x, y) ){
 						this.go.model.placeStone(x, y);
-						this.nextPlayer(x, y);
+						this.nextPlayer();
 					} else {
-						this.go.model.removeStone(x, y);
+						// this.go.model.removeStone(x, y);
 						console.log("no liberty");
 						//debugger;
 						//this.returnError("no liberty");
+						return false;
 					}
-				} else {  // les voisins sont des amis
+				} else {  // les voisins sont des amis @todo @morgan @quoi?
 					this.go.model.placeStone(x, y);
 				}
 			} //end if this.hasLiberty
@@ -52,7 +44,7 @@ var Go_Controller = dejavu.Class.declare({
 		//cell aint empty...
 		else
 		{ 
-			return "La case est occupée.";
+			return "La case est occupée."; // @todo gestion des erreurs
 		}
 	},
 	/**
@@ -60,15 +52,13 @@ var Go_Controller = dejavu.Class.declare({
 	 * Renvoie vrai si une chaîne passant par l'emplacement indiqué supposé 
 	 * appartenant au joueur player a une liberté (et donc s'il est possible 
 	 * selon les règles de placer la pierre ici)
-	 * @todo ennemi ko ?
 	 * @param  {x}  x int x pos of intersection
 	 * @param  {y}  y int y pos of intersection
 	 * @return {Boolean}   true : the cell has at least one liberty, false : no liberty
+	 * @todo tryCapture appelle chainHasLiberty sur une cellule avec pierre placée alors que placeStone appelle chainHasLiberty sur une cellule avec pierre pas placée. il faut se mettre d'accord. pierre pas placée est dans visitedarr donc ça devrait le faire. en pratique ça fonctionne de toute façon quel que soit le cas, tellement notre code est bon.
 	 */
-	chainHasLiberty: function(x, y){
+	chainHasLiberty: function(x, y, player){
 		var visitedArr = [];
-		var player = this.go.model.getIntersection(x,y).getOwner();
-		if (player === undefined) console.log("chainHL: player undefined");
 				
 		/**
 		 * intersectionVisited returns true if a cell has already been visited
@@ -78,7 +68,7 @@ var Go_Controller = dejavu.Class.declare({
 		function intersectionVisited(intersectionCoords){
 			for (var i = 0, len = visitedArr.length; i < len; i++){
 				if ( intersectionCoords[0] === visitedArr[i][0] && intersectionCoords[1] === visitedArr[i][1] )
-					return true
+					return true;
 			}
 			return false;
 		}
@@ -89,34 +79,35 @@ var Go_Controller = dejavu.Class.declare({
 		 * @param  {array} cell [x,y] coords
 		 * @return {bool}       true if a cell has a liberty (thus the whole chain has a liberty)
 		 */
-		function checkLiberties(x, y, player){
+		function recursivelyCheckIfChainHasLiberties(x, y, player){ // @todo axel n'a pas encore compris
+			visitedArr.push(coords);
 			var neighbours = this.go.model.getNeighboursCoords(x, y);
 			//cherche un voisin libre
 			console.log("checking liberties of "+ x +" "+y);
 					
-			return neighbours.some(function(coords){
+			return neighbours.some(function(coords){ // la callback peut s'appeler aUneLiberté
 				if ( !intersectionVisited(coords) ){
-					visitedArr.push(coords);
+					
 					var intersection = this.go.model.getIntersection(coords[0], coords[1]);
 					//console.log("checkLib : int is empty ? "+  intersection.isEmpty());
-					if ( intersection === undefined) console.log("intersect undefined ! " + intersection);
+					if ( typeof intersection === 'undefined') console.log("intersect undefined ! " + intersection); // @todo getIntersection return false si out of bounds?
 									
-					if (intersection.isEmpty()) {  //si voisin est libre
+					if (intersection.isEmpty()) {  // si un élément quelconque de la chaîne a une liberté, on renvoie true
 						return true;
 					} else if (intersection.getOwner() == player) {  //si voisin est potentiellement suivable
-						return checkLiberties(coords[0], coords[1], player);
+						return recursivelyCheckIfChainHasLiberties(coords[0], coords[1], player);
 					}						
 				}
 			});
 		}
 	
-	var success = checkLiberties(x, y, player);
-	console.log("has Liberty ? " + success);
+		var success = recursivelyCheckIfChainHasLiberties(x, y, player);
+		console.log("has Liberty ? " + success);
 			
 		return success;
 	},
 
-	getChainFromCoords: function(x, y, player){
+	getChainFromCoords: function(x, y, player){ // @todo @axel je dois comprendre
 
 		var chain = [];
 		// c'est plus compliqué que ça.
@@ -131,13 +122,13 @@ var Go_Controller = dejavu.Class.declare({
 		function intersectionVisited(intersection){
 			for (var i = 0; i < visitedArr.length; i++){
 				if ( intersection[0] === visitedArr[i][0] && intersection[1] === visitedArr[i][1] )
-					return true
+					return true;
 			}
 			return false;
 		}
 
 		/**
-		 * checkLiberties : each call evaluates liberties of a cell, 
+		 * checkLiberties : each call evaluates liberties of a cell, @todo @morgan #doucementsurlereggae
 		 * 	by recursivity it evaluates those of a chain
 		 * @param  {array} cell [x,y] coords
 		 * @return {bool}       true if a cell has a liberty (thus the whole chain has a liberty)
@@ -169,24 +160,26 @@ var Go_Controller = dejavu.Class.declare({
 	},
 
 	/**
-	 * captureStonesFrom does everything in order to capture stones around a cell;
+	 * captureChain does everything in order to capture stones around a cell;
 	 * @param {[int]} x x position of a cell on the goban
 	 * @param {[int]} y y position of a cell on the goban
 	 * @return {[type]}   [description]
 	 */
-	captureStonesFrom: function(x, y){
-		console.log(" capture stones around : "+x+" "+y);
+	captureChain: function(x, y){
+		console.log(" capture chain : "+x+" "+y);
 		
 		//détecter la chaine dont fait partie la pierre incriminée via exploration
-		var chain = this.getChainFromCoords(x, y, this.go.currentPlayer%2+1);
+		var chain = this.getChainFromCoords(x, y, this.go.notCurrentPlayer); // @todo pourquoi parfois on passe "player" et parfois on récup direct via this.go(not)CurrentPlayer?
+		
+		// @todo est-ce que getChainfromCoords devrait pas plutôt renvoyer des intersections ? @morgan
 
 		//console.log(this.go.currentPlayer);
 				
 		console.log(chain);
 				
 		//supprimer chaque pierre
-		chain.forEach(function(stone){
-			this.go.model.removeStone(stone[0], stone[1]);
+		chain.forEach(function(coords){
+			this.go.model.removeStone(coords[0], coords[1]);
 		});
 
 		return true;
@@ -213,23 +206,27 @@ var Go_Controller = dejavu.Class.declare({
 				enemies++;
 			}
 		});
-		console.log("neighbours are ennemies ? " + (enemies >= neighbours.length))
+		console.log("neighbours are ennemies ? " + (enemies >= neighbours.length));
 				
 		return enemies >= neighbours.length;
 	},
+	
 	noKo: function(x, y){
 		return true;
 	},
-	nextPlayer: function(x, y){
-		if (x) this.go.model.placeStone(x, y);
-		this.go.view.render();
+	
+	nextPlayer: function(){
+		// if (x) this.go.model.placeStone(x, y); @todo @morgan t'as fait quoi
 		this.go.changeCurrentPlayer();
+		this.go.view.render(); // @todo on sait pas si on render toute la queue ou si le modèle render au fur et à mesure
 		console.log("Joueur suivant ! : " + this.go.currentPlayer);
 	},
+	
 	isEmpty: function(cell) {
 		return cell.isEmpty();
 	},
-  captureIsPossible : function (x, y){
+	
+	captureIsPossible : function (x, y){
 		// var prevX = prevX || -1;
 		// if ( this.chainHasLiberty(currX, currY) ) 
 		// 	return false
@@ -260,22 +257,22 @@ var Go_Controller = dejavu.Class.declare({
 		var neighbours = this.go.model.getNeighboursCoords(x, y);
 		var success = false;
 		var that = this;
-		neighbours.forEach(function (intersection){			
-		console.log("essai de capture par : " + this.go.currentPlayer);
+		neighbours.forEach(function (coords){			
+			console.log("essai de capture par : " + this.go.currentPlayer);
 
-			//if ennemy neighbour chain has no liberty
-			if ( !that.chainHasLiberty(intersection[0], intersection[1], !this.go.currentPlayer) ) {
-				console.log("capture chain from "+intersection[0]+" "+intersection[1]);
-						
-				that.captureStonesFrom(intersection[0], intersection[1]);
-				console.log(this.go.currentPlayer+" capture inter " + intersection[0] + " " + intersection[1]);
+			// if ennemy neighbour chain has no liberty
+			if ( !that.chainHasLiberty(coords[0], coords[1], this.go.notCurrentPlayer) ) { // @todo il faudrait pouvoir merge les tableaux de cellules visitées si les chaînes de deux neighbours se rencontrent (optimisation)
+				console.log("capture chain from "+coords[0]+" "+coords[1]);
+
+				that.captureChain(coords[0], coords[1]);
+				console.log(this.go.currentPlayer+" capture inter " + coords[0] + " " + coords[1]);
 
 				success = true;
 			}
 		});
 
 		//si oui et que no ko alors capture
-		return success;
+		return success; // @todo @morgan à quoi sert ce return?
 	}
 
 
