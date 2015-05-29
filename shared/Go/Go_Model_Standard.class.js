@@ -1,6 +1,7 @@
 var Go_Model_Standard = dejavu.Class.declare({
 	$extends: Go_Model,
 	goban: null,
+	previousGoban : null,
 	
 	initialize: function(go) {
 		this.$super(go);
@@ -21,6 +22,30 @@ var Go_Model_Standard = dejavu.Class.declare({
 	getGoban: function() {
 		return this.goban;	
 	},
+
+	setPreviousGoban: function() {
+		this.previousGoban = [];
+		for (var i = 0; i < this.go.size; i++) {
+			this.previousGoban[i] = [];
+			for ( var j = 0; j < this.go.size; j++) {
+				this.previousGoban[i][j] = this.goban[i][j];
+			}
+		}
+	},	
+
+	currentGobanIsSameAsPrevious: function() {
+		if ( this.goban == this.previousGoban ) {
+			return true;
+		}
+		return false;
+	},
+
+	restorePreviousGoban: function() {
+		for (var i = 0; i < this.go.size; i++) {
+			for ( var j = 0; j < this.go.size; j++) {
+				this.goban[i][j] = this.previousGoban[i][j];
+			}
+		}	},
 	
 	// du top left dans le sens horaire
 	// @todo vérif bordures
@@ -30,7 +55,7 @@ var Go_Model_Standard = dejavu.Class.declare({
 	  if ( y-1 >= 0 ) neighbours.push(this.goban[x  ][y-1]);
 		if ( x+1 <= this.go.size-1 ) neighbours.push(this.goban[x+1][y  ]);
 		if ( y+1 <= this.go.size-1 ) neighbours.push(this.goban[x  ][y+1]);
-		if ( x-1 >= 0 ) neighbours.push(this.goban[x-1][y  ]);
+		if ( x-1 >= 0 ) neighbours.push(this.goban[x-1][y  ]);				
 		return neighbours;
 	},
 

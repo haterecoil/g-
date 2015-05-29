@@ -1,0 +1,20 @@
+Le ko :
+
+Le ko doit détecter si un coup ramène le goban a un état précédent.
+Deux règles
+
+1 : un coup ramenant le goban à l'état tour-1 est impossible
+2 : un coup ramenant le goban à n'importe quel état précédant est impossible
+
+Pour la règle 1 :
+
+début du tour
+stocker le goban dans old_goban
+faire des trucs sur le goban
+à la fin du tour
+	si goban != old_goban 
+		nextplayer
+	sinon 
+		goban = old_goban
+		retourner erreur
+
