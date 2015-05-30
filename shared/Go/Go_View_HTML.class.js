@@ -11,7 +11,7 @@ var Go_View_HTML = dejavu.Class.declare({
 		{
 			for (var x = 0; x<goban[0].length; x++)
 			{
-				$div.append('<div class="intersection" data-x="'+x+'" data-y="'+y+'">  '+goban[x][y].getOwner()+'</div>');
+				$div.append('<div class="intersection player'+goban[x][y].getOwner()+'" data-x="'+x+'" data-y="'+y+'"></div>');
 			}
 		}
 		$('body').append($div);
@@ -27,7 +27,7 @@ var Go_View_HTML = dejavu.Class.declare({
 		for ( var i = 0; i < divsNumber; i++){
 			divs[i].addEventListener('click', function(el){
 				that.go.controller.placeStone( parseInt(el.target.dataset.x), parseInt(el.target.dataset.y));						
-			})
+			});
 		}
 		
 				

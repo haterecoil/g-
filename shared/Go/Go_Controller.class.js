@@ -1,7 +1,8 @@
 //en bas, dictionnaire des fonctions
 var Go_Controller = dejavu.Class.declare({
 	$extends: Go_MvcComponent,
-	pendingStone: null,
+	pendingStone: null, // emplacement de la pierre que l'on tente de placer (utile pour les vérifications sur chaînes adjacentes, captures, etc.)
+	
 	// @todo fonctions statiques?
 
 	placeStone: function(x,y) {
@@ -10,7 +11,7 @@ var Go_Controller = dejavu.Class.declare({
 		if ( this.go.model.getIntersection(x,y).isEmpty() ) 
 		{
 			this.pendingStone = [x, y];
-			this.go.model.setPreviousGoban();
+			this.go.model.setPreviousGoban(); // "save" et "restore" ?
 					
 			// si il y a au moins une liberté...
 			if ( this.chainHasLiberty(x,y,this.go.currentPlayer) ){
@@ -39,6 +40,17 @@ var Go_Controller = dejavu.Class.declare({
 					}
 				}
 			} //end if this.hasLiberty
+			
+			//everything is fine if you got there !
+			if ( !this.go.model.currentGobanIsSameAsPrevious() ) {
+				console.log("YES ! No ko <3 "); // @todo faudrait placeStone à cet endroit là...
+				this.nextPlayer();
+			} else {
+				console.log("oops @ ko :x :x :x :x ");
+
+				this.go.model.setPreviousGoban();
+				return false;
+			}
 
 		}
 		//cell aint empty...
@@ -49,20 +61,6 @@ var Go_Controller = dejavu.Class.declare({
 
 		console.log("check previous go ref, should be 2 : ");
 		console.log(this.go.model.previousGoban[2][0].getOwner());
-				
-				
-
-		//everything is fine if you got there !
-		if ( !this.go.model.currentGobanIsSameAsPrevious() ) {
-			console.log("YES ! No ko <3 ");
-			this.nextPlayer();
-		} else {
-			console.log("oops @ ko :x :x :x :x ");
-					
-			this.go.model.setPreviousGoban();
-			return false;
-		}
-
 	},
 	/**
 	 * chainHasLiberty
@@ -77,7 +75,10 @@ var Go_Controller = dejavu.Class.declare({
 	chainHasLiberty: function(x, y, player){
 		var visitedArr = [];
 		var pendingStone = this.pendingStone;
-				
+				console.log(pendingStone);
+		console.log(x);
+		console.log(y);
+	
 		/**
 		 * intersectionVisited returns true if a cell has already been visited
 		 * @param  {array} intersection  [x,y] coords of the cell to check
@@ -86,7 +87,7 @@ var Go_Controller = dejavu.Class.declare({
 		function intersectionVisited(intersectionCoords){
 			for (var i = 0, len = visitedArr.length; i < len; i++){
 				if (  intersectionCoords[0] === visitedArr[i][0] && intersectionCoords[1] === visitedArr[i][1]    
-					||  intersectionCoords[0] === pendingStone[0]  && intersectionCoords[1] === pendingStone[1] ) { 
+					||  (intersectionCoords[0] === pendingStone[0]  && intersectionCoords[1] === pendingStone[1]) ) { 
 					return true;
 				}
 			} 
