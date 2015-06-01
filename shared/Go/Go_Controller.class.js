@@ -249,6 +249,8 @@ var Go_Controller = dejavu.Class.declare({
     
     recreateShootingIntervals: function() {
         // ça m'a pris 30 minutes, me fais pas une axelade
+        if (this.shootingInterval !== null)
+            clearInterval(this.shootingInterval);
         var shootingFunctions = [];
         for (var x = 0; x<this.go.size; x++)
 		{
