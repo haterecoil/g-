@@ -24,8 +24,12 @@ function testKo(){
 	go.model.getIntersection(1,1).setOwner(1);
 	go.model.getIntersection(0,2).setOwner(1);
 	go.model.getIntersection(1,3).setOwner(1);
+    
+	go.model.getIntersection(0,1).setOwner(2).setType(Go_Intersection.STONE_TURRET4);
 
 	go.view.render();
+    
+    go.controller.recreateShootingIntervals();
 }
 
 setTimeout(function() {

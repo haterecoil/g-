@@ -2,7 +2,8 @@
 var Go_Controller = dejavu.Class.declare({
 	$extends: Go_MvcComponent,
 	pendingStone: null, // emplacement de la pierre que l'on tente de placer (utile pour les vérifications sur chaînes adjacentes, captures, etc.)
-	
+    shootingInterval: null,
+    
 	// @todo fonctions statiques?
 
 	placeStone: function(x,y) {
@@ -246,7 +247,53 @@ var Go_Controller = dejavu.Class.declare({
 		this.go.changeCurrentPlayer();
 		this.go.view.render(); // @todo on sait pas si on render toute la queue ou si le modèle render au fur et à mesure
 		console.log("Joueur suivant ! : " + this.go.currentPlayer);
+        this.recreateShootingIntervals();   
+        
+        
+		
 	},
+    
+    recreateShootingIntervals: function() {
+        // ça m'a pris 30 minutes, me fais pas une axelade
+        var shootingFunctions = [];
+        for (var x = 0; x<this.go.size; x++)
+		{
+			for (var y = 0; y<this.go.size; y++)
+			{
+
+				if (this.go.model.getIntersection(x,y).getOwner() == this.go.notCurrentPlayer && this.go.model.getIntersection(x,y).getType() == Go_Intersection.STONE_TURRET4)
+                {
+                    var shootingFunctionGenerator = function(x,y) {
+                        var shooter = this.go.model.getIntersection(x,y).getOwner();
+                        var neighbours = this.go.model.getNeighbours(x,y)
+                        return function() {
+                            
+                                neighbours.forEach(function(neighbour){
+                                    if (!neighbour.isEmpty() && neighbour.getOwner() != shooter)
+                                        neighbour.getHit();
+                                });
+                            };
+                    };
+                    
+                    shootingFunctions.push(shootingFunctionGenerator(x,y));
+                    
+                }
+			}
+		}
+        console.log(this.shootingFunctions);
+        var that = this;
+        this.shootingInterval = setInterval( function() {
+         //   console.log(that.shootingFunctions); that.shootingFunctions.forEach(function(fn){ fn(); });
+            
+            for (var i = 0; i<shootingFunctions.length; i++)
+            {
+                
+                shootingFunctions[i]();
+            }
+            that.go.view.render();
+        } , 1000);   
+    },
+    
 	
 	isEmpty: function(cell) {
 		return cell.isEmpty();

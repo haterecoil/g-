@@ -5,6 +5,7 @@ var Go = dejavu.Class.declare({
 	controller: null,
 	size: null,
 	currentPlayer: null,
+    notCurrentPlayer: null,
 	
 	initialize: function(M,V,C,size) {
 		this.size = size;
@@ -12,7 +13,7 @@ var Go = dejavu.Class.declare({
 		this.view = new V(this);
 		this.controller = new C(this);
 		this.currentPlayer = 1;
-		this.notCrrentPlayer = 2;
+		this.notCurrentPlayer = 2;
 	},
 	
 	changeCurrentPlayer: function () {
