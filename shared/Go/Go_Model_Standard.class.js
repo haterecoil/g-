@@ -8,22 +8,17 @@ var Go_Model_Standard = dejavu.Class.declare({
 	initialize: function(go) {
 		this.$super(go);
 		this.goban = [];
-		this.previousGoban = [];
-		this.previousGoban2 = [];
+		this.previousGoban = "";
+		this.previousGoban2 = "";
 		for (var x = 0; x<this.go.size; x++)
 		{
 			var currentRow = [];
-			this.previousGoban.push([]);
-			this.previousGoban2.push([]);
 			for (var y = 0; y<this.go.size; y++)
 			{
 				currentRow.push( new Go_Intersection() );
 
-				this.previousGoban[x].push(new Go_Intersection());
-				this.previousGoban2[x].push(new Go_Intersection());
-				this.previousGoban[x][y].setOwner(3);
-				this.previousGoban2[x][y].setOwner(3);
-
+				this.previousGoban+="3";
+				this.previousGoban2+="3";
 			}
 			this.goban.push(currentRow);
 		}
@@ -36,33 +31,39 @@ var Go_Model_Standard = dejavu.Class.declare({
 	},
 
 	setPreviousGoban: function() {
+		this.previousGoban2 = "";
+		var c = 0;
 		for (var i = 0; i < this.go.size; i++) {
 			for ( var j = 0; j < this.go.size; j++) {
-				this.previousGoban2[i][j] = this.previousGoban[i][j];
+				this.previousGoban2 += this.previousGoban[c++];						
 			}
 		}		
+		this.previousGoban = "";
 		for (var i = 0; i < this.go.size; i++) {
 			for ( var j = 0; j < this.go.size; j++) {
-				this.previousGoban[i][j] = this.goban[i][j];
+				this.previousGoban += this.goban[i][j].getOwner();
 			}
 		}
 	},	
 
 	currentGobanIsSameAsPrevious: function() {
+		//get string from curr goban
+		var str = "";
 		for (var i = 0; i < this.go.size; i++) {
 			for ( var j = 0; j < this.go.size; j++) {
-				if ( this.goban[i][j] !== this.previousGoban2[i][j] ) {
-					return false;
-				}
+				str += this.goban[i][j].getOwner();
 			}
-		}	
-		return true;
+		}			
+		
+		if ( str === this.previousGoban2 ) return true;
+		return false;
 	},
 
 	restorePreviousGoban: function() {
+		var c = 0;
 		for (var i = 0; i < this.go.size; i++) {
 			for ( var j = 0; j < this.go.size; j++) {
-				this.goban[i][j] = this.previousGoban[i][j];
+				this.goban[i][j].setOwner(parseInt(this.previousGoban[c++]));
 			}
 		}	
 	},
