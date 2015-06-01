@@ -3,7 +3,7 @@ Le ko :
 Le ko doit détecter si un coup ramène le goban a un état précédent.
 Deux règles
 
-1 : un coup ramenant le goban à l'état tour-1 est impossible
+1 : un coup ramenant le goban à l'état tour-2 est impossible
 2 : un coup ramenant le goban à n'importe quel état précédant est impossible
 
 Pour la règle 1 :

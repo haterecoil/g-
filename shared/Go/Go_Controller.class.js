@@ -41,6 +41,11 @@ var Go_Controller = dejavu.Class.declare({
 				}
 			} //end if this.hasLiberty
 			
+			console.log("ko test, should be 3 : ");					
+			console.log(this.go.model.previousGoban2[4][4].getOwner());
+			console.log(this.go.model.previousGoban[4][4].getOwner());
+			console.log(this.go.model.goban[4][4].getOwner());
+
 			//everything is fine if you got there !
 			if ( !this.go.model.currentGobanIsSameAsPrevious() ) {
 				console.log("YES ! No ko <3 "); // @todo faudrait placeStone à cet endroit là...
@@ -48,9 +53,10 @@ var Go_Controller = dejavu.Class.declare({
 			} else {
 				console.log("oops @ ko :x :x :x :x ");
 
-				this.go.model.setPreviousGoban();
+				//this.go.model.setPreviousGoban();
 				return false;
 			}
+
 
 		}
 		//cell aint empty...
@@ -59,8 +65,6 @@ var Go_Controller = dejavu.Class.declare({
 			return "La case est occupée."; // @todo gestion des erreurs
 		}
 
-		console.log("check previous go ref, should be 2 : ");
-		console.log(this.go.model.previousGoban[2][0].getOwner());
 	},
 	/**
 	 * chainHasLiberty
@@ -311,4 +315,94 @@ var Go_Controller = dejavu.Class.declare({
 					vérifie que le coup ne provoquera pas de ko
 				[]this.returnError(string)
 					renvoie une erreur ( ko, no liberty, ou autre ?)
+
+
+
 			 */
+			
+
+// var useless = "FONCTION territoriser(intersection)
+// 	SI intersection fait partie de territoire_actuel
+// 		RETURN
+// 	FIN SI
+
+// 	SI intersection est de couleur opposée
+// 		territoire_valide = false;
+// 		RETURN
+// 	FIN SI
+	
+// 	SI intersection est de la meme couleur
+// 		RETURN
+// 	FIN SI	
+
+// 	AJOUTER intersection à territoire_actuel, RETIRER intersection de intersections_possibles
+
+// 	territoriser(intersection à gauche)
+// 	territoriser(intersection à droite)
+// 	territoriser(intersection en haut)
+// 	territoriser(intersection en bas)		
+// FIN FONCTION
+
+
+
+// TABLEAU intersections_possibles
+// TABLEAU territoire_actuel
+
+// TANT QUE intersections_possibles n'est pas vide
+// 	territoire_actuel = []
+// 	territoire_valide = true
+
+// 	ON APPELLE LA FONCTION RECURSIVE territoriser(intersection_possible au pif)
+
+// 	SI territoire_valide ALORS on ajoute au score la longueur du territoire_actuel	
+
+// FIN TANT QUE;";
+
+// var getScore = function (player) {
+
+// 	var getPossibleIntersections = function () {
+// 		var arr = [];
+// 		for (var x = 0; x < this.go.size; x++) {
+// 			arr[x] = [];
+// 			for ( var y = 0; y < this.go.size; y++ ) {
+// 				var intersection = this.model.getIntersection(x, y);
+// 				arr[x][y] = intersection;
+// 			}
+// 		}
+// 		return arr;
+// 	};	
+
+// 	var territorize = function (intersection) {
+// 		if (intersectionInCurrentTerritory(intersection)){
+// 			return;
+// 		}
+// 		if (intersection.getOwner() != player) {
+// 			validTerritory = false;
+// 			return;
+// 		}
+// 		if (intersection.getOwner() == player) {
+// 			return;
+// 		}
+// 		currentTerritory.push(intersection);
+
+// 	}
+
+// 	var getRandomIntersection = function() {
+
+// 	}
+
+// 	var currentTerritory = null;
+// 	var validTerritory = null;
+// 	var possibleIntersections = getPossibleIntersections();
+// 	var player = player;
+
+// 	while ( possibleIntersections.length > 0 ) {
+// 		currentTerritory = [];
+// 		validTerritory = true;
+// 		territorize(possibleIntersections[0]);
+// 		if (validTerritory) {
+// 			this.go.model.score(player) += currentTerritory.length;
+// 		}
+// 	}
+
+// }

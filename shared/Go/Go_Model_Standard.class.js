@@ -2,16 +2,28 @@ var Go_Model_Standard = dejavu.Class.declare({
 	$extends: Go_Model,
 	goban: null,
 	previousGoban : null,
+	previousGoban2 : null,
+	pendingGoban : null,
 	
 	initialize: function(go) {
 		this.$super(go);
 		this.goban = [];
+		this.previousGoban = [];
+		this.previousGoban2 = [];
 		for (var x = 0; x<this.go.size; x++)
 		{
 			var currentRow = [];
+			this.previousGoban.push([]);
+			this.previousGoban2.push([]);
 			for (var y = 0; y<this.go.size; y++)
 			{
 				currentRow.push( new Go_Intersection() );
+
+				this.previousGoban[x].push(new Go_Intersection());
+				this.previousGoban2[x].push(new Go_Intersection());
+				this.previousGoban[x][y].setOwner(3);
+				this.previousGoban2[x][y].setOwner(3);
+
 			}
 			this.goban.push(currentRow);
 		}
@@ -24,9 +36,12 @@ var Go_Model_Standard = dejavu.Class.declare({
 	},
 
 	setPreviousGoban: function() {
-		this.previousGoban = [];
 		for (var i = 0; i < this.go.size; i++) {
-			this.previousGoban[i] = [];
+			for ( var j = 0; j < this.go.size; j++) {
+				this.previousGoban2[i][j] = this.previousGoban[i][j];
+			}
+		}		
+		for (var i = 0; i < this.go.size; i++) {
 			for ( var j = 0; j < this.go.size; j++) {
 				this.previousGoban[i][j] = this.goban[i][j];
 			}
@@ -34,10 +49,14 @@ var Go_Model_Standard = dejavu.Class.declare({
 	},	
 
 	currentGobanIsSameAsPrevious: function() {
-		if ( this.goban == this.previousGoban ) {
-			return true;
-		}
-		return false;
+		for (var i = 0; i < this.go.size; i++) {
+			for ( var j = 0; j < this.go.size; j++) {
+				if ( this.goban[i][j] !== this.previousGoban2[i][j] ) {
+					return false;
+				}
+			}
+		}	
+		return true;
 	},
 
 	restorePreviousGoban: function() {
@@ -45,7 +64,8 @@ var Go_Model_Standard = dejavu.Class.declare({
 			for ( var j = 0; j < this.go.size; j++) {
 				this.goban[i][j] = this.previousGoban[i][j];
 			}
-		}	},
+		}	
+	},
 	
 	// du top left dans le sens horaire
 	// @todo vérif bordures

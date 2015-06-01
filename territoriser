@@ -1,0 +1,36 @@
+FONCTION territoriser(intersection)
+	SI intersection fait partie de territoire_actuel
+		RETURN
+	FIN SI
+
+	SI intersection est de couleur opposée
+		territoire_valide = false
+		RETURN
+	FIN SI
+	
+	SI intersection est de la meme couleur
+		RETURN
+	FIN SI	
+
+	AJOUTER intersection à territoire_actuel, RETIRER intersection de intersections_possibles
+
+	territoriser(intersection à gauche)
+	territoriser(intersection à droite)
+	territoriser(intersection en haut)
+	territoriser(intersection en bas)		
+FIN FONCTION
+
+--
+
+TABLEAU intersections_possibles
+TABLEAU territoire_actuel
+
+TANT QUE intersections_possibles n'est pas vide
+	territoire_actuel = []
+	territoire_valide = true
+
+	ON APPELLE LA FONCTION RECURSIVE territoriser(intersection_possible au pif)
+
+	SI territoire_valide ALORS on ajoute au score la longueur du territoire_actuel	
+
+FIN TANT QUE
