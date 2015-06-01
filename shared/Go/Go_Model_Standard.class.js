@@ -3,7 +3,7 @@ var Go_Model_Standard = dejavu.Class.declare({
 	goban: null,
 	previousGoban : null,
 	previousGoban2 : null,
-	pendingGoban : null,
+	gobanClone : null,
 	
 	initialize: function(go) {
 		this.$super(go);
@@ -46,6 +46,16 @@ var Go_Model_Standard = dejavu.Class.declare({
 		}
 	},	
 
+	cloneCurrentGoban: function() {
+		this.gobanClone = "";
+		var c = 0;
+		for (var i = 0; i < this.go.size; i++) {
+			for ( var j = 0; j < this.go.size; j++) {
+				this.gobanClone += this.previousGoban[c++];						
+			}
+		}		
+	},
+
 	currentGobanIsSameAsPrevious: function() {
 		//get string from curr goban
 		var str = "";
@@ -63,7 +73,7 @@ var Go_Model_Standard = dejavu.Class.declare({
 		var c = 0;
 		for (var i = 0; i < this.go.size; i++) {
 			for ( var j = 0; j < this.go.size; j++) {
-				this.goban[i][j].setOwner(parseInt(this.previousGoban[c++]));
+				this.goban[i][j].setOwner(parseInt(this.gobanClone[c++]));
 			}
 		}	
 	},

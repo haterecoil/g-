@@ -11,7 +11,7 @@ var Go_Controller = dejavu.Class.declare({
 		if ( this.go.model.getIntersection(x,y).isEmpty() ) 
 		{
 			this.pendingStone = [x, y];
-			this.go.model.setPreviousGoban(); // "save" et "restore" ?
+			this.go.model.cloneCurrentGoban(); // "save" et "restore" ?
 					
 			// si il y a au moins une liberté...
 			if ( this.chainHasLiberty(x,y,this.go.currentPlayer) ){
@@ -44,6 +44,7 @@ var Go_Controller = dejavu.Class.declare({
 			//everything is fine if you got there !
 			if ( !this.go.model.currentGobanIsSameAsPrevious() ) {
 				console.log("YES ! No ko <3 "); // @todo faudrait placeStone à cet endroit là...
+				this.go.model.setPreviousGoban();
 				this.nextPlayer();
 			} else {
 				console.log("oops @ ko :x :x :x :x ");
@@ -75,10 +76,7 @@ var Go_Controller = dejavu.Class.declare({
 	chainHasLiberty: function(x, y, player){
 		var visitedArr = [];
 		var pendingStone = this.pendingStone;
-				console.log(pendingStone);
-		console.log(x);
-		console.log(y);
-	
+
 		/**
 		 * intersectionVisited returns true if a cell has already been visited
 		 * @param  {array} intersection  [x,y] coords of the cell to check
@@ -273,10 +271,10 @@ var Go_Controller = dejavu.Class.declare({
 			neighbours.forEach(function (coords){			
 				// if ennemy neighbour chain has no liberty
 				if ( !that.chainHasLiberty(coords[0], coords[1], that.getOtherPlayer(player)) ) { // @todo il faudrait pouvoir merge les tableaux de cellules visitées si les chaînes de deux neighbours se rencontrent (optimisation)
-					console.log("[call] captureChain x"+coords[0]+" y"+coords[1] + " pl:" + player);
+					//console.log("[call] captureChain x"+coords[0]+" y"+coords[1] + " pl:" + player);
 
 					that.captureChain(coords[0], coords[1], player);
-					console.log(this.go.currentPlayer+" captured inter " + coords[0] + " " + coords[1]);
+					//console.log(this.go.currentPlayer+" captured inter " + coords[0] + " " + coords[1]);
 
 					success = true;
 				}
