@@ -12,7 +12,7 @@ var Go_Controller = dejavu.Class.declare({
 		if ( this.go.model.getIntersection(x,y).isEmpty() ) 
 		{
 			this.pendingStone = [x, y];
-			this.go.model.setPreviousGoban(); // "save" et "restore" ?
+			this.go.model.cloneCurrentGoban(); // "save" et "restore" ?
 					
 			// si il y a au moins une liberté...
 			if ( this.chainHasLiberty(x,y,this.go.currentPlayer) ){
@@ -41,19 +41,16 @@ var Go_Controller = dejavu.Class.declare({
 					}
 				}
 			} //end if this.hasLiberty
-			
-			console.log("ko test, should be 3 : ");					
-			console.log(this.go.model.previousGoban2[4][4].getOwner());
-			console.log(this.go.model.previousGoban[4][4].getOwner());
-			console.log(this.go.model.goban[4][4].getOwner());
 
 			//everything is fine if you got there !
 			if ( !this.go.model.currentGobanIsSameAsPrevious() ) {
 				console.log("YES ! No ko <3 "); // @todo faudrait placeStone à cet endroit là...
+				this.go.model.setPreviousGoban();
 				this.nextPlayer();
 			} else {
 				console.log("oops @ ko :x :x :x :x ");
-
+				//this.go.model.removeStone(x, y);
+				this.go.model.restorePreviousGoban();
 				//this.go.model.setPreviousGoban();
 				return false;
 			}
@@ -80,10 +77,7 @@ var Go_Controller = dejavu.Class.declare({
 	chainHasLiberty: function(x, y, player){
 		var visitedArr = [];
 		var pendingStone = this.pendingStone;
-				console.log(pendingStone);
-		console.log(x);
-		console.log(y);
-	
+
 		/**
 		 * intersectionVisited returns true if a cell has already been visited
 		 * @param  {array} intersection  [x,y] coords of the cell to check
@@ -110,7 +104,7 @@ var Go_Controller = dejavu.Class.declare({
 			visitedArr.push(coords);
 			var neighbours = this.go.model.getNeighboursCoords(x, y);
 			//cherche un voisin libre
-			console.log("checking liberties of "+ x +" "+y);
+			//console.log("checking liberties of "+ x +" "+y);
 					
 			return neighbours.some(function(coords){ // la callback peut s'appeler aUneLiberté
 				if ( !intersectionVisited(coords) ){
@@ -118,7 +112,7 @@ var Go_Controller = dejavu.Class.declare({
 					var intersection = this.go.model.getIntersection(coords[0], coords[1]);
 					//console.log("checkLib : int is empty ? "+  intersection.isEmpty());
 					if ( typeof intersection === 'undefined'  )  {
-						console.log("intersect undefined ! " + intersection); // @todo getIntersection return false si out of bounds?
+						//console.log("intersect undefined ! " + intersection); // @todo getIntersection return false si out of bounds?
 					}
 									
 					if (intersection.isEmpty()) {  // si un élément quelconque de la chaîne a une liberté, on renvoie true
@@ -131,7 +125,7 @@ var Go_Controller = dejavu.Class.declare({
 		}
 	
 		var success = recursivelyCheckIfChainHasLiberties(x, y, player);
-		console.log("has Liberty ? " + success);
+		//console.log("has Liberty ? " + success);
 			
 		return success;
 	},
@@ -156,7 +150,7 @@ var Go_Controller = dejavu.Class.declare({
 
 		function aggregateStones(x, y, player){
 
-			console.log(" ###### AGGREGATE STONES ######");
+			////console.log(" ###### AGGREGATE STONES ######");
 							
 			//chope les coords des voisins
 			var neighbours = this.go.model.getNeighboursCoords(x, y);
@@ -170,18 +164,18 @@ var Go_Controller = dejavu.Class.declare({
 						
 				//si l'intersection n'a pas été visitée
 				if ( !intersectionVisited(coords[0], coords[1]) ){
-					console.log("owner of inter : " + intersection.getOwner());
-					console.log("coords : " +coords[0]+" "+coords[1]);
+					////console.log("owner of inter : " + intersection.getOwner());
+					////console.log("coords : " +coords[0]+" "+coords[1]);
 					//visitedArr.push(intersection);
 							
 					if ( intersection.getOwner() === player) {  
-						console.log("found chain part :" +coords[0]+" "+coords[1] );
+						////console.log("found chain part :" +coords[0]+" "+coords[1] );
 						//chain.push([coords[0], coords[1]]);
 						return aggregateStones(coords[0], coords[1], player);
 					}			
 				}		
 			});
-			console.log(chain);
+			////console.log(chain);
 					
 			return chain;
 		}
@@ -197,7 +191,7 @@ var Go_Controller = dejavu.Class.declare({
 	 * @return {[type]}   [description]
 	 */
 	captureChain: function(x, y, playerCapturing){
-		console.log(" [call] getChainFC : "+x+" "+y+" pl:" + this.getOtherPlayer(playerCapturing));
+		//console.log(" [call] getChainFC : "+x+" "+y+" pl:" + this.getOtherPlayer(playerCapturing));
 		
 		//détecter la chaine dont fait partie la pierre incriminée via exploration
 		var chain = this.getChainFromCoords(x, y, this.getOtherPlayer(playerCapturing)); // @todo pourquoi parfois on passe "player" et parfois on récup direct via this.go(not)CurrentPlayer?
@@ -206,7 +200,7 @@ var Go_Controller = dejavu.Class.declare({
 
 		//console.log(this.go.currentPlayer);
 				
-		console.log(chain);
+		//console.log(chain);
 				
 		//supprimer chaque pierre
 		chain.forEach(function(coords){
@@ -225,15 +219,15 @@ var Go_Controller = dejavu.Class.declare({
 	neighboursAreEnemiesOf: function(x, y, player){
 		var neighbours = this.go.model.getNeighbours(x, y);
 		var enemies = 0;
-		console.log("voisins : ");
-			console.log(neighbours);
+		//console.log("voisins : ");
+			//console.log(neighbours);
 					
 		neighbours.forEach(function(cell){					
 			if ( !cell.isEmpty() && cell.getOwner() != player ){
 				enemies++;
 			}
 		});
-		console.log("neighbours are ennemies ? " + (enemies >= neighbours.length));
+		//console.log("neighbours are ennemies ? " + (enemies >= neighbours.length));
 				
 		return enemies >= neighbours.length;
 	},
@@ -324,10 +318,10 @@ var Go_Controller = dejavu.Class.declare({
 			neighbours.forEach(function (coords){			
 				// if ennemy neighbour chain has no liberty
 				if ( !that.chainHasLiberty(coords[0], coords[1], that.getOtherPlayer(player)) ) { // @todo il faudrait pouvoir merge les tableaux de cellules visitées si les chaînes de deux neighbours se rencontrent (optimisation)
-					console.log("[call] captureChain x"+coords[0]+" y"+coords[1] + " pl:" + player);
+					//console.log("[call] captureChain x"+coords[0]+" y"+coords[1] + " pl:" + player);
 
 					that.captureChain(coords[0], coords[1], player);
-					console.log(this.go.currentPlayer+" captured inter " + coords[0] + " " + coords[1]);
+					//console.log(this.go.currentPlayer+" captured inter " + coords[0] + " " + coords[1]);
 
 					success = true;
 				}
