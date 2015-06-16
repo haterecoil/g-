@@ -5,7 +5,7 @@ var Go = dejavu.Class.declare({
 	controller: null,
 	size: null,
 	currentPlayer: null,
-    notCurrentPlayer: null,
+  notCurrentPlayer: null,
 	
 	initialize: function(M,V,C,size) {
 		this.size = size;
