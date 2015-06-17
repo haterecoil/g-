@@ -13,6 +13,7 @@ var Go_View_HTML = dejavu.Class.declare({
 			{
 				$div.append('<div class="intersection player'+goban[x][y].getOwner()+'" data-x="'+x+'" data-y="'+y+'">'+goban[x][y].getType()+'<br/>' +goban[x][y].getHP()+'</div>');
 			}
+			/*$div.append('<div class="intersection" style="background: red">');*/
 		}
 		$('body').append($div);
 

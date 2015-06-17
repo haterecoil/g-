@@ -2,10 +2,12 @@ var Go_Controller_Client = dejavu.Class.declare({
 	$extends: Go_Controller,
     // inherit parent Go_Controller  
 	
-	// Renvoie vraie si l'état actuel du jeu fait que la partie n'est pas d'office terminée
-	gameCanGoOn: function(x,y) {
-		return true;
-	},
+
+    
+    placeStone: function(x,y) {
+        this.$super(x,y);
+        // socket.emit('placeStone',[x,y]);
+    },
 
 	setListeners: function() {
 		

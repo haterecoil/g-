@@ -38,6 +38,7 @@ var Go_Intersection = dejavu.Class.declare({
                                            
 	removeStone: function(){
 		this._owner = 0;
+		this.type = null;
 	},
     
     getHP: function(){
