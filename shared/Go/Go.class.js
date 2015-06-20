@@ -5,14 +5,21 @@ var Go = dejavu.Class.declare({
 	controller: null,
 	size: null,
 	currentPlayer: null,
-  notCurrentPlayer: null,
-  playerPassed: 0,
+	notCurrentPlayer: null,
+	playerPassed: 0,
 	
 	initialize: function(M,V,C,size) {
 		this.size = size;
-		this.model = new M(this);
-		this.view = new V(this);
-		this.controller = new C(this);
+		
+		M->setGo(this);
+		this.model = M;
+		
+		V->setGo(this);
+		this.view = V;
+		
+		C->setGo(this);
+		this.controller = C;
+		
 		this.currentPlayer = 1;
 		this.notCurrentPlayer = 2;
 	},

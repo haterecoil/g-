@@ -7,13 +7,13 @@ var Go_Controller = dejavu.Class.declare({
     
 	// @todo fonctions statiques?
 
-	placeStone: function(x,y) {
+	placeStone: function(x,y,type) {
 		console.log("##### Joueur : "+ this.go.currentPlayer + " #  " + x + " " + y);
 				
 		if ( this.go.model.getIntersection(x,y).isEmpty() ) 
 		{
 			// this.pendingStone = [x, y];
-			this.go.model.placeStone(x, y);
+			this.go.model.placeStone(x, y, type);
 			
 			// qu'est-ce que t'as fait
 			// this.go.model.cloneCurrentGoban(); // "save" et "restore" ?
@@ -25,6 +25,7 @@ var Go_Controller = dejavu.Class.declare({
 				// HEHE LOL
 				alert('IS KO LOL');
 				alert('SALU HÉ SALUT');
+				return false;
 			}
 			
 			// si il y a au moins une liberté...
@@ -45,6 +46,7 @@ var Go_Controller = dejavu.Class.declare({
 						// HEHE LOL
 						alert('IS KO LOL 2');
 						alert('SALU HÉ SALUT');
+						return false;
 						// @todo removestone
 						// parce que
 					}
@@ -70,6 +72,7 @@ var Go_Controller = dejavu.Class.declare({
 							// HEHE LOL
 							alert('IS KO LOL 3');
 							alert('SALU HÉ SALUT');
+							return false;
 						}
 						else
 							this.playerHasPlayed();

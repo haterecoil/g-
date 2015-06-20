@@ -3,7 +3,11 @@ var Go_MvcComponent = dejavu.Class.declare({
 
 	initialize: function(go) {
 		console.log('Constructeur MVC Component !');
-		this.go = go;
+		// this.go = go;
+	},
+	
+	setGo: function(go) {
+		this.go = go;	
 	}
 	
 });

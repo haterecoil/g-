@@ -33,7 +33,7 @@ var Go_View_HTML = dejavu.Class.declare({
 		{
 			for (var x = 0; x<goban[0].length; x++)
 			{
-				$div.append('<div class="intersection player'+goban[x][y].getOwner()+'" data-x="'+x+'" data-y="'+y+'">'+goban[x][y].getType()+'<br/>' +goban[x][y].getHP()+'</div>');
+				$div.append('<div class="intersection player'+goban[x][y].getOwner()+' type'+goban[x][y].getType()+'" data-x="'+x+'" data-y="'+y+'">'+goban[x][y].getType()+'<br/>' +goban[x][y].getHP()+'</div>');
 			}
 			/*$div.append('<div class="intersection" style="background: red">');*/
 		}
@@ -49,7 +49,7 @@ var Go_View_HTML = dejavu.Class.declare({
 		var that = this;
 		for ( var i = 0; i < divsNumber; i++){
 			divs[i].addEventListener('click', function(el){
-				that.go.controller.placeStone( parseInt(el.target.dataset.x), parseInt(el.target.dataset.y));						
+				that.go.controller.placeStone( parseInt(el.target.dataset.x), parseInt(el.target.dataset.y), Go_Intersection.STONE_NORMAL);						
 			});
 		}
 		

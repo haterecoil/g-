@@ -5,3 +5,6 @@
 
 .player1 { background: #222222; color: #CCCCCC; }
 .player2 { background: #CCCCCC; color: #222222; }
+
+.type1 {  }
+.type2 { border: 1px solid red; }

@@ -125,8 +125,8 @@ var Go_Model_Standard = dejavu.Class.declare({
 		return neighbours;
 	},
 	
-	placeStone : function(x,y) {
-		this.goban[x][y].setOwner(this.go.currentPlayer);	
+	placeStone : function(x,y,type) {
+		this.goban[x][y].setOwner(this.go.currentPlayer).setType(type);	
 	},
 	removeStone : function(x,y) {
 		this.goban[x][y].removeStone();	
