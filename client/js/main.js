@@ -11,12 +11,6 @@ go.controller.initializeHandlers();
 
 
 
-function connect(){
-	socket.emit('joinRoom');
-}
-
-
-
 /**
  * SOCKET IO
  */
@@ -27,14 +21,16 @@ socket.on('gameBegins',  gameBegins);
 socket.on('yourTurn',    myTurn);
 socket.on('youClicked',    youClicked);
 
-function iAmBlack(){
-	log('me black lol');
-			
+function iAmBlack() {
+	log('me black lel');
+	go.setMePlayer(0);
 }
+
 function iAmWhite(){
 	log('me white lel');
-			
+	go.setMePlayer(1);
 }
+
 function gameBegins(){
 	log('lets do this');
 			
@@ -111,10 +107,10 @@ function testKo(){
     
     go.controller.recreateShootingIntervals();
 }
-
+/*
 setTimeout(function() {
 	testKo();
-},100);
+},100);*/
 /*
 
 socket.on('placeStone',function(params) {

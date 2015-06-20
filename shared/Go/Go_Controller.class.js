@@ -7,7 +7,15 @@ var Go_Controller = dejavu.Class.declare({
     
 	// @todo fonctions statiques?
 
+	authorityPlaceStone: function(x,y, type) {
+		this.go.model.placeStone(x, y, type);
+		this.tryCapture(x, y, this.go.currentPlayer);
+		this.playerHasPlayed(); // ou pas?
+		this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: 		this.go.model.getSerializedGoban()});
+	},
+	
 	placeStone: function(x,y,type) {
+		
 		console.log("##### Joueur : "+ this.go.currentPlayer + " #  " + x + " " + y);
 				
 		if ( this.go.model.getIntersection(x,y).isEmpty() ) 
@@ -54,6 +62,8 @@ var Go_Controller = dejavu.Class.declare({
 					{
 						this.playerHasPlayed();
 						this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: this.go.model.getSerializedGoban()});
+						console.log('tue');
+						return true;
 					}
 
 			} else {
@@ -75,7 +85,10 @@ var Go_Controller = dejavu.Class.declare({
 							return false;
 						}
 						else
+						{
 							this.playerHasPlayed();
+							return true;
+						}
 			
 					} else { 
 						console.info('Try capture FAILED. FUCK OFF.');

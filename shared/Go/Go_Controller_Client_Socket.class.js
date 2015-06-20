@@ -11,18 +11,23 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
     
     placeStone: function(x,y,type) {
         if (this.$super(x,y,type)) // appelle placeStone du Go_Controller, et si c'est permis, emit socket
+		{
 			socket.emit('placeStone',[x,y,type]);
+		}
+		else
+			alert('NOOO');
+		
     },
 	
 	playerPass: function() {
-        this.$super(x,y) // appelle placeStone du Go_Controller, et si c'est permis, emit socket
+        this.$super() // appelle placeStone du Go_Controller, et si c'est permis, emit socket
 		socket.emit('playerPass');
     },
 	
 	initializeHandlers: function() {
 		var that = this;
 		socket.on('placeStone',function(coords,type) {
-			that.go.controller.placeStone(coords[0],coords[1],type);
+			that.go.controller.authorityPlaceStone(coords[0],coords[1],type);
 		});
 		socket.on('playerPass',function(coords) {
 			that.go.controller.playerPass();

@@ -1,6 +1,6 @@
 var http = require('http'),
     fs = require('fs'),
-    dejavu = require('dejavu')
+    dejavu = require('dejavu');
 
 // Send index.html to all requests
 var app = http.createServer(function(req, res) {
@@ -11,7 +11,7 @@ var app = http.createServer(function(req, res) {
 // Socket.io server listens to our app
 var io = require('socket.io').listen(app);
 
-var bits = {};
+// var bits = {};
 
 
 eval(fs.readFileSync('../shared/Go/Go.class.js')+'');
@@ -32,7 +32,7 @@ console.log('kikou <3');
 
 var rooms = [{
 	players: [],
-	room_id : getTimestamp(),
+	room_id : 5,
 	blackPlayer: null,
 	whitePlayer: null,
 	currentPlayer: null
@@ -58,6 +58,7 @@ io.sockets.on('connection', function(socket) {
 			// console.log('room mates ');
 			// console.log(io.nsps['/'].adapter.rooms[rooms[0].room_id]);
 					
+			console.log('joinRoom received');
 			socket.emit('youClicked');
 
 			if ( rooms[0].players.length >= 2 ) {
@@ -83,23 +84,37 @@ io.sockets.on('connection', function(socket) {
 
 				// console.log(JSON.stringify(rooms));
 
-				socket.to(rooms[0].blackPlayer).emit('youAreBlack');
-				socket.to(rooms[0].whitePlayer).emit('youAreWhite');
+				io.to(rooms[0].blackPlayer).emit('youAreBlack');
+				io.to(rooms[0].whitePlayer).emit('youAreWhite');
+
+		//		socket.broadcast.emit('youAreBlack');
+				
+				
+				
+				io.to(rooms[0].blackPlayer).emit('gameBegins');
+				io.to(rooms[0].whitePlayer).emit('gameBegins');
+
+				
 
 				/*console.log(rooms[0].blackPlayer);
 				console.log(rooms[0].whitePlayer);*/
 						
 
-				socket.to(rooms[0].room_id).emit('gameBegins');
+				// socket.to(rooms[0].room_id).emit('gameBegins');
 				// console.log(rooms[0].room_id);
 						
-				socket.emit(rooms[0].blackPlayer).emit('yourTurn');
+				io.to(rooms[0].blackPlayer).emit('yourTurn');
 			}
 					
 		});	
 
     socket.on('placeStone', function(params) {
+		console.log('placestone');
         socket.broadcast.emit('placeStone',params);
+    });
+	
+	socket.on('playerPass', function(params) {
+        socket.broadcast.emit('playerPass',params);
     })
 });
 

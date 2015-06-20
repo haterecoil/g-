@@ -4,11 +4,11 @@ var Go_Controller_Client = dejavu.Class.declare({
 	
 
     
-    placeStone: function(x,y) {
+  /*  placeStone: function(x,y) {
         this.$super(x,y);
         // socket.emit('placeStone',[x,y]);
     },
-
+*/
 	setListeners: function() {
 		
 	}

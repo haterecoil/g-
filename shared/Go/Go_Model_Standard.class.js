@@ -17,13 +17,13 @@ var Go_Model_Standard = dejavu.Class.declare({
 			{
 				currentRow.push( new Go_Intersection() );
 
-				this.previousGoban+="3";
-				this.previousGoban2+="3";
+				this.previousGoban+="3"; // carglass répare, carglass remplace
+				this.previousGoban2+="3"; // amora, par amour du goût
 			}
 			this.goban.push(currentRow);
 		}
 		
-		console.log(this.goban);	
+		console.log(this.goban);
 	},
 	
 	getGoban: function() {

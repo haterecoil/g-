@@ -4,6 +4,7 @@ var Go = dejavu.Class.declare({
 	view: null,
 	controller: null,
 	size: null,
+	mePlayer: null,
 	currentPlayer: null,
 	notCurrentPlayer: null,
 	playerPassed: 0,
@@ -23,6 +24,10 @@ var Go = dejavu.Class.declare({
 		
 		this.currentPlayer = 1;
 		this.notCurrentPlayer = 2;
+	},
+	
+	setMePlayer: function(playerId) {
+		mePlayer = playerId;
 	},
 	
 	changeCurrentPlayer: function () {
