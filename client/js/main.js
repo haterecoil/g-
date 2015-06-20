@@ -1,9 +1,59 @@
+
 var go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),5,5);
 
 go.view.init();
 
 socket.emit('joinRoom',0);
 go.controller.initializeHandlers();
+
+var socket = io('http://localhost:9090');
+
+
+
+
+function connect(){
+	socket.emit('joinRoom');
+}
+
+
+
+/**
+ * SOCKET IO
+ */
+
+socket.on('youAreBlack', iAmBlack);
+socket.on('youAreWhite', iAmWhite);
+socket.on('gameBegins',  gameBegins);
+socket.on('yourTurn',    myTurn);
+socket.on('youClicked',    youClicked);
+
+function iAmBlack(){
+	log('me black lol');
+			
+}
+function iAmWhite(){
+	log('me white lel');
+			
+}
+function gameBegins(){
+	log('lets do this');
+			
+}
+function myTurn(){
+	log('fire in my hole');			
+}
+
+function log(message){
+	$('.log').append(message + '  <br/>');
+}
+
+function youClicked(){
+	log('you clickd <3');
+}
+
+
+
+
 
 function testCapture(){
 	go.model.getIntersection(2,1).setOwner(1);

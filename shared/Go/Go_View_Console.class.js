@@ -5,5 +5,9 @@ var Go_View_Console = dejavu.Class.declare({
 	
 	render: function() {
 		console.log('render console');
+	},
+
+	log: function(message){
+		console.log(message);
 	}
 });
