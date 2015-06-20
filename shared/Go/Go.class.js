@@ -27,7 +27,7 @@ var Go = dejavu.Class.declare({
 	},
 	
 	setMePlayer: function(playerId) {
-		mePlayer = playerId;
+		this.mePlayer = playerId;
 	},
 	
 	changeCurrentPlayer: function () {
