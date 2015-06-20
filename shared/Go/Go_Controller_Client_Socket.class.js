@@ -1,6 +1,7 @@
 var Go_Controller_Client_Socket = dejavu.Class.declare({
 	$extends: Go_Controller_Client,
 	socket: null,
+	updateInterval: null,
     // inherit parent Go_Controller  
 	
 	initialize: function(socket) {
@@ -34,11 +35,23 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
 		});
 		socket.on('update',function(coords) {
 			// ?
+			that.updateHandler();
 		});
 		
-		setInterval(function() {
+		this.updateInterval = setInterval(function() {
 			socket.emit('update');
 		},5000); // on peut faire péter le serv avec des loops
+	},
+
+	updateHandler: function(JSON) {
+		//called every 5 seconds
+		//get a new goban state :
+		//	intersections ( owner, type, health points )
+		//	
+		var goban = JSON.goban
+		this.go.goban = goban;
+		this.go.view.render();
+
 	}
 
 

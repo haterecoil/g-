@@ -44,6 +44,10 @@ var Go_Intersection = dejavu.Class.declare({
     getHP: function(){
         return this.HP;   
     },
+
+    setHP: function(HP){
+        this.HP = HP;
+    }
     
     getHit: function(){
         this.HP = this.HP-10;   

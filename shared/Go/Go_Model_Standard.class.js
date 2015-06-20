@@ -41,6 +41,37 @@ var Go_Model_Standard = dejavu.Class.declare({
 		}
 		return ret;
 	},
+
+	getSerializedGobanWithHp: function() {
+		var ret = '[';
+		for (var x = 0; x<this.go.size; x++)
+		{
+			for (var y = 0; y<this.go.size; y++)
+			{
+				var intersection = this.getIntersection(x,y);
+				ret += '{"owner": '+intersection.getOwner()+', "type": '+intersection.getType()+', "health": '+intersection.getHP()+'},';
+			}
+		}
+		ret = ret.slice(0,-1);
+		ret+=']';
+		return ret;
+	},
+
+	setGobanFromSerialized: function(serializedGoban) {
+		var JSONgoban = serializedGoban.parse();
+		var i = 0;
+		for ( var x = 0; x<this.go.size; x++ )
+		{
+			for (var y = 0; i<this.go.size; y++)
+			{
+				i++;
+				var intersection = this.getIntersection(x, y);
+				intersection.setOwner(JSONgoban[i].owner);
+				intersection.setType(JSONgoban[i].type);
+				intersection.setHealth(JSONgoban[i].health);
+			}
+		}
+	},
 	
 	countPlayer: function(pl) {
 		

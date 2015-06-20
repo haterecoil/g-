@@ -25,7 +25,7 @@ eval(fs.readFileSync('../shared/Go/Go_View_Console.class.js')+'');
 eval(fs.readFileSync('../shared/Go/Go_Intersection.class.js')+'');
 
 console.log('kikou <3');
-		
+	
 
 //var go = new Go(Go_Model_Standard,Go_View_Console,Go_Controller_Server,5,5);
 //go.view.log('kikou  <3 ');
@@ -35,7 +35,8 @@ var rooms = [{
 	room_id : 5,
 	blackPlayer: null,
 	whitePlayer: null,
-	currentPlayer: null
+	currentPlayer: null,
+	go: null
 
 }];
 
@@ -51,7 +52,8 @@ io.sockets.on('connection', function(socket) {
 					
 
 			rooms[0].players.push({ socket_id: socket.id });
-			// socket.join(rooms[0].room_id); @todo WHAT
+			socket.join(rooms[0].room_id);
+			// @todo WHAT
 
 			// console.log(JSON.stringify(rooms));
 				
@@ -70,38 +72,16 @@ io.sockets.on('connection', function(socket) {
 					rdmWhitePlayer = 0;
 				else
 					rdmWhitePlayer = 1;
-				
-					// console.log('random number : ' + rdmBlackPlayer);
-						
-				// console.log('inverse of rdm is : ' + rdmWhitePlayer);
-						
-				// console.log(rooms[0].players[rdmBlackPlayer]);
-				// console.log(rooms[0].players[rdmWhitePlayer]);
 						
 				rooms[0].blackPlayer = rooms[0].players[rdmBlackPlayer].socket_id;
 				rooms[0].whitePlayer = rooms[0].players[rdmWhitePlayer].socket_id;
 				rooms[0].currentPlayer = rooms[0].blackPlayer;
 
-				// console.log(JSON.stringify(rooms));
 
 				io.to(rooms[0].blackPlayer).emit('youAreBlack');
 				io.to(rooms[0].whitePlayer).emit('youAreWhite');
-
-		//		socket.broadcast.emit('youAreBlack');
-				
-				
-				
-				io.to(rooms[0].blackPlayer).emit('gameBegins');
-				io.to(rooms[0].whitePlayer).emit('gameBegins');
-
-				
-
-				/*console.log(rooms[0].blackPlayer);
-				console.log(rooms[0].whitePlayer);*/
 						
-
-				// socket.to(rooms[0].room_id).emit('gameBegins');
-				// console.log(rooms[0].room_id);
+				io.to(rooms[0].room_id).emit('gameBegins');
 						
 				io.to(rooms[0].blackPlayer).emit('yourTurn');
 			}
@@ -121,10 +101,6 @@ io.sockets.on('connection', function(socket) {
 // @todo verif si obj contient left top text etc.
 
 app.listen(9090);
-
-function beginGame(){
-	var blackPlayer = rooms[0].players[Math.floor(Math.random()*2)]
-}
 
 function getTimestamp(){
 	var time = process.hrtime();

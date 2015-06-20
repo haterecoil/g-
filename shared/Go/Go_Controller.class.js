@@ -2,7 +2,7 @@
 var Go_Controller = dejavu.Class.declare({
 	$extends: Go_MvcComponent,
 	pendingStone: null, // emplacement de la pierre que l'on tente de placer (utile pour les vérifications sur chaînes adjacentes, captures, etc.)
-    shootingInterval: null,
+  shootingInterval: null,
 	history: [],
     
 	// @todo fonctions statiques?
