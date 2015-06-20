@@ -11,13 +11,14 @@ var Go = dejavu.Class.declare({
 	initialize: function(M,V,C,size) {
 		this.size = size;
 		
-		M->setGo(this);
+		M.setGo(this);
+		M.createGoban();
 		this.model = M;
 		
-		V->setGo(this);
+		V.setGo(this);
 		this.view = V;
 		
-		C->setGo(this);
+		C.setGo(this);
 		this.controller = C;
 		
 		this.currentPlayer = 1;

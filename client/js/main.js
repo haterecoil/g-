@@ -2,11 +2,11 @@
 var go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),5,5);
 
 go.view.init();
+var socket = io('http://localhost:9090');
 
 socket.emit('joinRoom',0);
 go.controller.initializeHandlers();
 
-var socket = io('http://localhost:9090');
 
 
 
@@ -95,7 +95,7 @@ function testFullEnd(){
 
 }
 
-function testKo(){
+function testKo(){	
 	/*go.model.getIntersection(2,1).setOwner(2);
 	go.model.getIntersection(3,2).setOwner(2);
 	go.model.getIntersection(1,2).setOwner(2);
@@ -117,7 +117,6 @@ setTimeout(function() {
 },100);
 /*
 
-var socket = io.connect('http://141.138.157.211:9090');
 socket.on('placeStone',function(params) {
     params;
 });*/
@@ -149,9 +148,9 @@ setInterval(function() { socket.emit('getRooms'); }, 3000);
 socket.on('rooms', function(rooms) {
 	$('.lobby__rooms').empty();
 	rooms.forEach(function (i, el) {
-		$('.lobby__rooms').append($('<li><a href="#"> ' + el.roomName ' </a></li>').data('roomId',el.roomId));
+		$('.lobby__rooms').append($('<li><a href="#"> ' + el.roomName + ' </a></li>').data('roomId',el.roomId));
 	});
-}
+});
 
 $('.lobby__rooms').on('click','a', function() {
 	alert('JOIN ROOM : ' + $(this).parent().data('roomId'));

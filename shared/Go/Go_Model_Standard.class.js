@@ -5,8 +5,8 @@ var Go_Model_Standard = dejavu.Class.declare({
 	previousGoban2 : null,
 	gobanClone : null,
 	
-	initialize: function(go) {
-		this.$super(go);
+	
+	createGoban: function() {
 		this.goban = [];
 		this.previousGoban = "";
 		this.previousGoban2 = "";
@@ -23,7 +23,7 @@ var Go_Model_Standard = dejavu.Class.declare({
 			this.goban.push(currentRow);
 		}
 		
-		console.log(this.goban);
+		console.log(this.goban);	
 	},
 	
 	getGoban: function() {

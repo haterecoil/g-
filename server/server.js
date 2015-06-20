@@ -47,47 +47,51 @@ io.sockets.on('connection', function(socket) {
 		
 		socket.on('joinRoom', function(){
 			
-			console.log('Y U JOIN ?');
+			// console.log('Y U JOIN ?');
 					
 
 			rooms[0].players.push({ socket_id: socket.id });
-			socket.join(rooms[0].room_id);
+			// socket.join(rooms[0].room_id); @todo WHAT
 
-			console.log(JSON.stringify(rooms));
+			// console.log(JSON.stringify(rooms));
 				
-			console.log('room mates ');
-			console.log(io.nsps['/'].adapter.rooms[rooms[0].room_id]);
+			// console.log('room mates ');
+			// console.log(io.nsps['/'].adapter.rooms[rooms[0].room_id]);
 					
-				socket.emit('youClicked');
+			socket.emit('youClicked');
 
 			if ( rooms[0].players.length >= 2 ) {
-				console.log('room is full');
+				// console.log('room is full');
 						
 				var rdmBlackPlayer = Math.floor(Math.random()*2);
-				if ( rdmBlackPlayer == 1  ) rdmWhitePlayer = 0 
-					else rdmWhitePlayer = 1
-				console.log('random number : ' + rdmBlackPlayer);
+				
+				if ( rdmBlackPlayer == 1  )
+					rdmWhitePlayer = 0;
+				else
+					rdmWhitePlayer = 1;
+				
+					// console.log('random number : ' + rdmBlackPlayer);
 						
-				console.log('inverse of rdm is : ' + rdmWhitePlayer);
+				// console.log('inverse of rdm is : ' + rdmWhitePlayer);
 						
-				console.log(rooms[0].players[rdmBlackPlayer]);
-				console.log(rooms[0].players[rdmWhitePlayer]);
+				// console.log(rooms[0].players[rdmBlackPlayer]);
+				// console.log(rooms[0].players[rdmWhitePlayer]);
 						
 				rooms[0].blackPlayer = rooms[0].players[rdmBlackPlayer].socket_id;
 				rooms[0].whitePlayer = rooms[0].players[rdmWhitePlayer].socket_id;
 				rooms[0].currentPlayer = rooms[0].blackPlayer;
 
-				console.log(JSON.stringify(rooms));
+				// console.log(JSON.stringify(rooms));
 
 				socket.to(rooms[0].blackPlayer).emit('youAreBlack');
 				socket.to(rooms[0].whitePlayer).emit('youAreWhite');
 
-				console.log(rooms[0].blackPlayer);
-				console.log(rooms[0].whitePlayer);
+				/*console.log(rooms[0].blackPlayer);
+				console.log(rooms[0].whitePlayer);*/
 						
 
 				socket.to(rooms[0].room_id).emit('gameBegins');
-				console.log(rooms[0].room_id);
+				// console.log(rooms[0].room_id);
 						
 				socket.emit(rooms[0].blackPlayer).emit('yourTurn');
 			}
