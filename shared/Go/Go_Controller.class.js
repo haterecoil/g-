@@ -50,7 +50,7 @@ var Go_Controller = dejavu.Class.declare({
 					}
 					else
 					{
-						this.nextPlayer();
+						this.playerHasPlayed();
 						this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: this.go.model.getSerializedGoban()});
 					}
 
@@ -72,7 +72,7 @@ var Go_Controller = dejavu.Class.declare({
 							alert('SALU HÉ SALUT');
 						}
 						else
-							this.nextPlayer();
+							this.playerHasPlayed();
 			
 					} else { 
 						console.info('Try capture FAILED. FUCK OFF.');
@@ -284,13 +284,17 @@ var Go_Controller = dejavu.Class.declare({
 	
 	nextPlayer: function(){
 		// if (x) this.go.model.placeStone(x, y); @todo @morgan t'as fait quoi
+
+		if ( this.go.playerPassed >= 2 ) {
+			this.endOfGame();
+		}
 		this.go.changeCurrentPlayer();
+				
 		this.go.view.render(); // @todo on sait pas si on render toute la queue ou si le modèle render au fur et à mesure
 		console.log("Joueur suivant ! : " + this.go.currentPlayer);
-        this.recreateShootingIntervals();   
+    
+    this.recreateShootingIntervals();   
         
-        
-		
 	},
 	
 	isKo: function() {
@@ -412,6 +416,36 @@ var Go_Controller = dejavu.Class.declare({
 		//si oui et que no ko alors capture
 		catchThemAll(x, y); 
 		return success;// @todo @morgan à quoi sert ce return?
+	},
+
+	playerPass: function(){
+				
+		this.go.playerPassed++;
+		console.log('player passed');
+
+		console.log(this.go.model.getSerializedGoban());
+		console.log(this.go.playerPassed);
+				
+				
+				
+		if ( this.go.playerPassed >= 2 ) {
+			this.go.controller.endOfGame();
+		}
+		this.go.controller.nextPlayer();
+				
+	},
+
+	playerHasPlayed: function(){
+		this.resetPlayerPassedCounter();
+		this.nextPlayer();
+	},
+
+	resetPlayerPassedCounter: function() {
+		this.go.playerPassed = 0;
+	},
+
+	endOfGame: function(){
+		alert("End Of Game <3");
 	}
 	
 });
@@ -442,89 +476,13 @@ var Go_Controller = dejavu.Class.declare({
 
 			 */
 			
-
-// var useless = "FONCTION territoriser(intersection)
-// 	SI intersection fait partie de territoire_actuel
-// 		RETURN
-// 	FIN SI
-
-// 	SI intersection est de couleur opposée
-// 		territoire_valide = false;
-// 		RETURN
-// 	FIN SI
+/**
 	
-// 	SI intersection est de la meme couleur
-// 		RETURN
-// 	FIN SI	
+	[nouveau tour de joueur]
+	//fait des trucs 
+	 \si joueur passe
+		  passMyTurn ( nextPlayer ) 
 
-// 	AJOUTER intersection à territoire_actuel, RETIRER intersection de intersections_possibles
-
-// 	territoriser(intersection à gauche)
-// 	territoriser(intersection à droite)
-// 	territoriser(intersection en haut)
-// 	territoriser(intersection en bas)		
-// FIN FONCTION
-
-
-
-// TABLEAU intersections_possibles
-// TABLEAU territoire_actuel
-
-// TANT QUE intersections_possibles n'est pas vide
-// 	territoire_actuel = []
-// 	territoire_valide = true
-
-// 	ON APPELLE LA FONCTION RECURSIVE territoriser(intersection_possible au pif)
-
-// 	SI territoire_valide ALORS on ajoute au score la longueur du territoire_actuel	
-
-// FIN TANT QUE;";
-
-// var getScore = function (player) {
-
-// 	var getPossibleIntersections = function () {
-// 		var arr = [];
-// 		for (var x = 0; x < this.go.size; x++) {
-// 			arr[x] = [];
-// 			for ( var y = 0; y < this.go.size; y++ ) {
-// 				var intersection = this.model.getIntersection(x, y);
-// 				arr[x][y] = intersection;
-// 			}
-// 		}
-// 		return arr;
-// 	};	
-
-// 	var territorize = function (intersection) {
-// 		if (intersectionInCurrentTerritory(intersection)){
-// 			return;
-// 		}
-// 		if (intersection.getOwner() != player) {
-// 			validTerritory = false;
-// 			return;
-// 		}
-// 		if (intersection.getOwner() == player) {
-// 			return;
-// 		}
-// 		currentTerritory.push(intersection);
-
-// 	}
-
-// 	var getRandomIntersection = function() {
-
-// 	}
-
-// 	var currentTerritory = null;
-// 	var validTerritory = null;
-// 	var possibleIntersections = getPossibleIntersections();
-// 	var player = player;
-
-// 	while ( possibleIntersections.length > 0 ) {
-// 		currentTerritory = [];
-// 		validTerritory = true;
-// 		territorize(possibleIntersections[0]);
-// 		if (validTerritory) {
-// 			this.go.model.score(player) += currentTerritory.length;
-// 		}
-// 	}
+ */
 
 // }

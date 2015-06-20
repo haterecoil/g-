@@ -2,10 +2,10 @@
 
 var Go_View_HTML = dejavu.Class.declare({
 	$extends: Go_View,
-	
-	render: function() {
+
+	init: function() {
 		var goban = this.go.model.getGoban();
-		$('body').empty();
+		$('.goban-container').empty();
 		$div = $('<div class="goban" style="width:'+goban.length*52+'px;"></div>');
 		for (var y = 0; y<goban.length; y++)
 		{
@@ -15,7 +15,29 @@ var Go_View_HTML = dejavu.Class.declare({
 			}
 			/*$div.append('<div class="intersection" style="background: red">');*/
 		}
-		$('body').append($div);
+		$('.goban-container').append($div);
+
+		$pass = $('<button class="pass-my-turn">passer</button>');
+		$('.goban-controls').append($pass);
+
+		$pass.click(this.go.controller.playerPass.bind(this));
+
+		this.setListeners();
+	},
+	
+	render: function() {
+		var goban = this.go.model.getGoban();
+		$('.goban-container').empty();
+		$div = $('<div class="goban" style="width:'+goban.length*52+'px;"></div>');
+		for (var y = 0; y<goban.length; y++)
+		{
+			for (var x = 0; x<goban[0].length; x++)
+			{
+				$div.append('<div class="intersection player'+goban[x][y].getOwner()+'" data-x="'+x+'" data-y="'+y+'">'+goban[x][y].getType()+'<br/>' +goban[x][y].getHP()+'</div>');
+			}
+			/*$div.append('<div class="intersection" style="background: red">');*/
+		}
+		$('.goban-container').append($div);
 
 		this.setListeners();
 		console.log('rendered');

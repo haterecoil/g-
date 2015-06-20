@@ -44,21 +44,15 @@ var Go_Model_Standard = dejavu.Class.declare({
 	
 	countPlayer: function(pl) {
 		
-		console.log('cp (lol) : pl ' +pl);
-		
 		var count = 0;
 		for (var x = 0; x<this.go.size; x++)
 		{
 			for (var y = 0; y<this.go.size; y++)
 			{
-				console.log('cp get owner' + this.getIntersection(x,y).getOwner());
 				count += this.getIntersection(x,y).getOwner() === pl;
-				console.log('cpl count' + count);
-			
 			}
 		}
 		
-		console.error('COUNT : ' + count);
 		return count;
 	},
 

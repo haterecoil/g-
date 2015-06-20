@@ -1,6 +1,6 @@
 var go = new Go(Go_Model_Standard,Go_View_HTML,Go_Controller_Client,5,5);
 
-go.view.render();
+go.view.init();
 
 function testCapture(){
 	go.model.getIntersection(2,1).setOwner(1);
