@@ -16,6 +16,8 @@ var Go_Controller = dejavu.Class.declare({
 	
 	placeStone: function(x,y,type) {
 		
+		if (this.go.currentPlayer != this.go.mePlayer) return false;
+		
 		console.log("##### Joueur : "+ this.go.currentPlayer + " #  " + x + " " + y);
 				
 		if ( this.go.model.getIntersection(x,y).isEmpty() ) 

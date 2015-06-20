@@ -23,12 +23,12 @@ socket.on('youClicked',    youClicked);
 
 function iAmBlack() {
 	log('me black lel');
-	go.setMePlayer(0);
+	go.setMePlayer(1);
 }
 
 function iAmWhite(){
 	log('me white lel');
-	go.setMePlayer(1);
+	go.setMePlayer(2);
 }
 
 function gameBegins(){
