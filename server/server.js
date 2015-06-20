@@ -35,7 +35,8 @@ var rooms = [{
 	room_id : 5,
 	blackPlayer: null,
 	whitePlayer: null,
-	currentPlayer: null
+	currentPlayer: null,
+	go: null
 
 }];
 
@@ -61,7 +62,9 @@ io.sockets.on('connection', function(socket) {
 			console.log('joinRoom received');
 			socket.emit('youClicked');
 
-			if ( rooms[0].players.length >= 2 ) {
+			if ( rooms[0].players.length >= 2 ) { // GAME START MOTHERFUCKER
+				rooms[0].go = new Go(new Go_Model_Standard,new Go_View_Console,new Go_Controller_Client_Socket(socket),5,5);
+
 				// console.log('room is full');
 						
 				var rdmBlackPlayer = Math.floor(Math.random()*2);
@@ -110,7 +113,10 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('placeStone', function(params) {
 		console.log('placestone');
-        socket.broadcast.emit('placeStone',params);
+		if (!go.placeStone(params.x,params.y,params.type))
+			socket.emit('nope');
+		else
+			socket.broadcast.emit('placeStone',params);
     });
 	
 	socket.on('playerPass', function(params) {
