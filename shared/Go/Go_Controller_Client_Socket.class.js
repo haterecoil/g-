@@ -12,12 +12,9 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
     
     placeStone: function(x,y,type) {
         if (this.$super(x,y,type)) // appelle placeStone du Go_Controller, et si c'est permis, emit socket
-		{
 			socket.emit('placeStone',{x: x, y: y, type: type});
-		}
 		else
 			alert('NOOO');
-		
     },
 	
 	playerPass: function() {
@@ -36,6 +33,10 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
 		socket.on('update',function(coords) {
 			// ?
 			that.updateHandler();
+		});
+		socket.on('nope', function() {
+			alert('Mouvement non autorisé');
+			// @todo remove le dernier coup et switch back player
 		});
 		
 		this.updateInterval = setInterval(function() {

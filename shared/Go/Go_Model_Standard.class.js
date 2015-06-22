@@ -86,54 +86,6 @@ var Go_Model_Standard = dejavu.Class.declare({
 		
 		return count;
 	},
-
-	setPreviousGoban: function() {
-		this.previousGoban2 = "";
-		var c = 0;
-		for (var i = 0; i < this.go.size; i++) {
-			for ( var j = 0; j < this.go.size; j++) {
-				this.previousGoban2 += this.previousGoban[c++];						
-			}
-		}		
-		this.previousGoban = "";
-		for (var i = 0; i < this.go.size; i++) {
-			for ( var j = 0; j < this.go.size; j++) {
-				this.previousGoban += this.goban[i][j].getOwner();
-			}
-		}
-	},	
-
-	cloneCurrentGoban: function() {
-		this.gobanClone = "";
-		var c = 0;
-		for (var i = 0; i < this.go.size; i++) {
-			for ( var j = 0; j < this.go.size; j++) {
-				this.gobanClone += this.previousGoban[c++];						
-			}
-		}		
-	},
-
-	currentGobanIsSameAsPrevious: function() {
-		//get string from curr goban
-		var str = "";
-		for (var i = 0; i < this.go.size; i++) {
-			for ( var j = 0; j < this.go.size; j++) {
-				str += this.goban[i][j].getOwner();
-			}
-		}			
-		
-		if ( str === this.previousGoban2 ) return true;
-		return false;
-	},
-
-	restorePreviousGoban: function() {
-		var c = 0;
-		for (var i = 0; i < this.go.size; i++) {
-			for ( var j = 0; j < this.go.size; j++) {
-				this.goban[i][j].setOwner(parseInt(this.gobanClone[c++]));
-			}
-		}	
-	},
 	
 	// du top left dans le sens horaire
 	// @todo vérif bordures

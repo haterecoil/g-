@@ -20,7 +20,6 @@ socket.on('youAreWhite', iAmWhite);
 socket.on('gameBegins',  gameBegins);
 socket.on('yourTurn',    myTurn);
 socket.on('youClicked',    youClicked);
-socket.on('nope', function() { alert('Mouvement non autorisé'); });
 function iAmBlack() {
 	log('me black lel');
 	go.setMePlayer(1);
