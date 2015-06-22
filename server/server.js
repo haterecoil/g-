@@ -63,7 +63,7 @@ io.sockets.on('connection', function(socket) {
 			socket.emit('youClicked');
 
 			if ( rooms[0].players.length >= 2 ) { // GAME START MOTHERFUCKER
-				rooms[0].go = new Go(new Go_Model_Standard,new Go_View_Console,new Go_Controller_Client_Socket(socket),5,5);
+				rooms[0].go = new Go(new Go_Model_Standard,new Go_View_Console,new Go_Controller_Server,5,5);
 
 				// console.log('room is full');
 						
@@ -113,7 +113,8 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('placeStone', function(params) {
 		console.log('placestone');
-		if (!go.placeStone(params.x,params.y,params.type))
+		console.log(rooms[0].go.controller.placeStone(params.x,params.y,params.type));
+		if (!rooms[0].go.controller.placeStone(params.x,params.y,params.type))
 			socket.emit('nope');
 		else
 			socket.broadcast.emit('placeStone',params);

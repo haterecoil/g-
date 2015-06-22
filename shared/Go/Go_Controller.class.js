@@ -14,112 +14,69 @@ var Go_Controller = dejavu.Class.declare({
 		this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: 		this.go.model.getSerializedGoban()});
 	},
 	
+	nextPlayerCanPlay: function() {
+		for (var x=0; x<this.go.size; x++)
+		{
+			for (var y=0; y<this.go.size; y++)
+			{
+				if (this.go.model.getIntersection(x,y).isEmpty())
+				{
+					this.go.model.placeStone(x, y, Go_Intersection.STONE_NORMAL);
+					if (this.isKo())
+					{
+						this.go.model.removeStone(x, y);
+					}
+					else
+					{
+						this.go.model.removeStone(x, y);
+						return true;	
+					}
+				}
+			}
+		}
+		return false;
+	},
+	
 	placeStone: function(x,y,type) {
 		
-		if (this.go.currentPlayer != this.go.mePlayer) return false;
+		
 		
 		console.log("##### Joueur : "+ this.go.currentPlayer + " #  " + x + " " + y);
 				
 		if ( this.go.model.getIntersection(x,y).isEmpty() ) 
 		{
-			// this.pendingStone = [x, y];
 			this.go.model.placeStone(x, y, type);
-			
-			// qu'est-ce que t'as fait
-			// this.go.model.cloneCurrentGoban(); // "save" et "restore" ?
-			// non
-			
-			// regarde
+
 			if (this.isKo())
 			{
 				// HEHE LOL
-				alert('IS KO LOL');
-				alert('SALU HÉ SALUT');
+				this.go.model.removeStone(x, y);
+				console.log('KO PRECAPTURE');
 				return false;
 			}
 			
-			// si il y a au moins une liberté...
-			if ( this.chainHasLiberty(x,y) ){
-				console.info('Yes liberty');
-				
-					// placer la pierre
-					// this.go.model.placeStone(x, y);
-					
-					// this.go.view.queue("setStone", {x, y}); pourquoi pas un système de queue, pour le render notamment
-							
-					//voir si ça déclenche une capture
-					this.tryCapture(x, y, this.go.currentPlayer);
-					
-				// regarde
-					if (this.isKo())
-					{
-						// HEHE LOL
-						alert('IS KO LOL 2');
-						alert('SALU HÉ SALUT');
-						return false;
-						// @todo removestone
-						// parce que
-					}
-					else
-					{
-						this.playerHasPlayed();
-						this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: this.go.model.getSerializedGoban()});
-						console.log('tue');
-						return true;
-					}
-
-			} else {
-				console.info('No liberty');
-				//si les voisins sont des ennemis
-				// if ( this.neighboursAreEnemiesOf(x, y, this.go.currentPlayer) ){ // @todo this.neighboursBelongTo ? @todo faire en sorte que le code ne dépende pas du joueur actuel et soit générique (player passé en argument, pas de concept d'ennemi) ?
-					//si une capture est possible
-					if ( this.tryCapture(x, y, this.go.currentPlayer) ){
-						console.info('Try capture SUCCESS')
-						
-						this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: this.go.model.getSerializedGoban()});
-						// this.go.model.placeStone(x, y);
-						// regarde
-						if (this.isKo())
-						{
-							// HEHE LOL
-							alert('IS KO LOL 3');
-							alert('SALU HÉ SALUT');
-							return false;
-						}
-						else
-						{
-							this.playerHasPlayed();
-							return true;
-						}
+			this.tryCapture(x, y, this.go.currentPlayer);
 			
-					} else { 
-						console.info('Try capture FAILED. FUCK OFF.');
-						this.go.model.removeStone(x, y);
-						console.info("no liberty");
-						//debugger;
-						//this.returnError("no liberty");
-						return false;
-					}
-				// } ==> elle essaie de bouffer tout court, pas besoin de check
-			} //end if this.hasLiberty
-
-			//everything is fine if you got there !
-			/*if ( !this.go.model.currentGobanIsSameAsPrevious() ) { todo clean
-				console.log("YES ! No ko <3 "); // @todo faudrait placeStone à cet endroit là...
-				this.go.model.setPreviousGoban();
-				this.nextPlayer();
-			} else {
-				console.log("oops @ ko :x :x :x :x ");
-				//this.go.model.removeStone(x, y);
-				this.go.model.restorePreviousGoban();
-				//this.go.model.setPreviousGoban();
+			if (this.isKo())
+			{
+				this.go.model.removeStone(x, y);
+				console.log('KO POSTCAPTURE');
 				return false;
-			}*/
-
-
+			}
+			else if ( !this.chainHasLiberty(x,y) )
+			{
+				this.go.model.removeStone(x, y);
+				console.log('NO LIBERTY POST');
+				return false;
+			}
+			else
+			{
+				this.playerHasPlayed();
+				this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: this.go.model.getSerializedGoban()});
+				return true;
+			}
 		}
-		//cell aint empty...
-		else
+		else // if not empty
 		{ 
 			return "La case est occupée."; // @todo gestion des erreurs
 		}
@@ -161,17 +118,20 @@ var Go_Controller = dejavu.Class.declare({
 		 * @param  {array} cell [x,y] coords
 		 * @return {bool}       true if a cell has a liberty (thus the whole chain has a liberty)
 		 */
+		
+		var that = this;
+		
 		function recursivelyCheckIfChainHasLiberties(x, y, player){ // @todo axel n'a pas encore compris
 			var coords = [x, y];
 			visitedArr.push(coords);
-			var neighbours = this.go.model.getNeighboursCoords(x, y);
+			var neighbours = that.go.model.getNeighboursCoords(x, y);
 			//cherche un voisin libre
 			//console.log("checking liberties of "+ x +" "+y);
 					
 			return neighbours.some(function(coords){ // la callback peut s'appeler aUneLiberté
 				if ( !intersectionVisited(coords) ){
 					
-					var intersection = this.go.model.getIntersection(coords[0], coords[1]);
+					var intersection = that.go.model.getIntersection(coords[0], coords[1]);
 					//console.log("checkLib : int is empty ? "+  intersection.isEmpty());
 					if ( typeof intersection === 'undefined'  )  {
 						//console.log("intersect undefined ! " + intersection); // @todo getIntersection return false si out of bounds?
@@ -303,6 +263,9 @@ var Go_Controller = dejavu.Class.declare({
 	nextPlayer: function(){
 		// if (x) this.go.model.placeStone(x, y); @todo @morgan t'as fait quoi
 
+		if (!this.nextPlayerCanPlay()) // @todo pas sûr si c'est le meilleur emplacement
+			alert('FIN DE PARTIE');
+			
 		if ( this.go.playerPassed >= 2 ) {
 			this.endOfGame();
 		}
@@ -316,7 +279,7 @@ var Go_Controller = dejavu.Class.declare({
 	},
 	
 	isKo: function() {
-		console.log('is ko ');
+		console.log('in fn isko');
 		var nbPl = [null, this.go.model.countPlayer(1), this.go.model.countPlayer(2)];
 		
 		for (var i = 0; i<this.history.length; i++)
@@ -329,7 +292,7 @@ var Go_Controller = dejavu.Class.declare({
 	},
 	
 	isKorama: function(xToR,yToR) {
-				console.log('is ko ');
+		console.log('in fn iskorama');
 
 		var nbPl = [null, this.go.model.countPlayer(1), this.go.model.countPlayer(2)];
 		nbPl[this.getIntersection(xToR,yToR).getOwner()]--;
@@ -359,7 +322,7 @@ var Go_Controller = dejavu.Class.declare({
                 {
                     var shootingFunctionGenerator = function(x,y) {
                         var shooter = this.go.model.getIntersection(x,y).getOwner();
-                        var neighbours = this.go.model.getNeighbours(x,y)
+                        var neighbours = this.go.model.getNeighbours(x,y);
                         return function() {
                             
                                 neighbours.forEach(function(neighbour){
@@ -412,12 +375,25 @@ var Go_Controller = dejavu.Class.declare({
 		var that = this;
 		var success = false;
 		console.log("## TryCapture, joueur "+player+" : " + x +" "+ y);
-						
+
+		console.log('A');
+		console.log(this.go.model);
+		console.log('B');
+		console.log(that.go.model);
 		function catchThemAll(x, y) {
+			console.log('C');
+			console.log(that.go.model);
+
 			//pour chaque voisin, tester si le voisin est ennemi et si 
 			//la chaine dont il fait partie est capturable
-			var neighbours = this.go.model.getNeighboursCoords(x, y);	
-			neighbours.forEach(function (coords){			
+			var neighbours = that.go.model.getNeighboursCoords(x, y);	
+			neighbours.forEach(function (coords){
+
+				console.log('start');
+				console.log(that);
+				console.log('endthis');
+				console.log(that.go.model);
+				console.log('---');
 				if (that.go.model.getIntersection(coords[0],coords[1]).getOwner() === 0) return;
 				// if ennemy neighbour chain has no liberty
 				if ( that.go.model.getIntersection(coords[0],coords[1]).getOwner() !== that.player && !that.chainHasLiberty(coords[0], coords[1]) ) { // @todo il faudrait pouvoir merge les tableaux de cellules visitées si les chaînes de deux neighbours se rencontrent (optimisation)
