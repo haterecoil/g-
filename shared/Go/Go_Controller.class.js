@@ -14,7 +14,7 @@ var Go_Controller = dejavu.Class.declare({
 		this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: 		this.go.model.getSerializedGoban()});
 	},
 	
-	nextPlayerCanPlay: function() {
+	playerCanPlay: function() {
 		for (var x=0; x<this.go.size; x++)
 		{
 			for (var y=0; y<this.go.size; y++)
@@ -22,7 +22,7 @@ var Go_Controller = dejavu.Class.declare({
 				if (this.go.model.getIntersection(x,y).isEmpty())
 				{
 					this.go.model.placeStone(x, y, Go_Intersection.STONE_NORMAL);
-					if (this.isKo())
+					if (this.isKo() || !this.chainHasLiberty(x,y))
 					{
 						this.go.model.removeStone(x, y);
 					}
@@ -156,6 +156,7 @@ var Go_Controller = dejavu.Class.declare({
 	getChainFromCoords: function(x, y, player){ // @todo @axel je dois comprendre
 
 		var chain = [];
+		var that = this;
 		// c'est plus compliqué que ça.
 
 		/**
@@ -176,14 +177,14 @@ var Go_Controller = dejavu.Class.declare({
 			////console.log(" ###### AGGREGATE STONES ######");
 							
 			//chope les coords des voisins
-			var neighbours = this.go.model.getNeighboursCoords(x, y);
+			var neighbours = that.go.model.getNeighboursCoords(x, y);
 
 			//ajoute la pierre initiale à la chaine
 			chain.push([x,y]);
 
 			neighbours.forEach(function(coords){
 				//récupère l'intersection depuis des coordonnées
-				var intersection = this.go.model.getIntersection(coords[0], coords[1]);
+				var intersection = that.go.model.getIntersection(coords[0], coords[1]);
 						
 				//si l'intersection n'a pas été visitée
 				if ( !intersectionVisited(coords[0], coords[1]) ){
@@ -226,8 +227,9 @@ var Go_Controller = dejavu.Class.declare({
 		//console.log(chain);
 				
 		//supprimer chaque pierre
+		var that = this;
 		chain.forEach(function(coords){
-			this.go.model.removeStone(coords[0], coords[1]);
+			that.go.model.removeStone(coords[0], coords[1]);
 		});
 
 		return true;
@@ -262,15 +264,20 @@ var Go_Controller = dejavu.Class.declare({
 	
 	nextPlayer: function(){
 		// if (x) this.go.model.placeStone(x, y); @todo @morgan t'as fait quoi
-
-		if (!this.nextPlayerCanPlay()) // @todo pas sûr si c'est le meilleur emplacement
-			alert('FIN DE PARTIE');
 			
 		if ( this.go.playerPassed >= 2 ) {
 			this.endOfGame();
 		}
+		
 		this.go.changeCurrentPlayer();
-				
+		
+		if (!this.playerCanPlay()) // @todo pas sûr si c'est le meilleur emplacement
+		{
+			console.log('FIN DE PARTIE');
+			alert('FIN DE PARTIE');
+			// this.go.changeCurrentPlayer();
+		}
+		
 		this.go.view.render(); // @todo on sait pas si on render toute la queue ou si le modèle render au fur et à mesure
 		console.log("Joueur suivant ! : " + this.go.currentPlayer);
     
@@ -376,24 +383,13 @@ var Go_Controller = dejavu.Class.declare({
 		var success = false;
 		console.log("## TryCapture, joueur "+player+" : " + x +" "+ y);
 
-		console.log('A');
-		console.log(this.go.model);
-		console.log('B');
-		console.log(that.go.model);
 		function catchThemAll(x, y) {
-			console.log('C');
-			console.log(that.go.model);
 
 			//pour chaque voisin, tester si le voisin est ennemi et si 
 			//la chaine dont il fait partie est capturable
 			var neighbours = that.go.model.getNeighboursCoords(x, y);	
 			neighbours.forEach(function (coords){
 
-				console.log('start');
-				console.log(that);
-				console.log('endthis');
-				console.log(that.go.model);
-				console.log('---');
 				if (that.go.model.getIntersection(coords[0],coords[1]).getOwner() === 0) return;
 				// if ennemy neighbour chain has no liberty
 				if ( that.go.model.getIntersection(coords[0],coords[1]).getOwner() !== that.player && !that.chainHasLiberty(coords[0], coords[1]) ) { // @todo il faudrait pouvoir merge les tableaux de cellules visitées si les chaînes de deux neighbours se rencontrent (optimisation)

@@ -32,6 +32,10 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
 		socket.on('update',function(coords) {
 			// ?
 		});
+		socket.on('nope', function() {
+			alert('Mouvement non autorisé');
+			// @todo remove le dernier coup et switch back player
+		});
 		
 		setInterval(function() {
 			socket.emit('update');
