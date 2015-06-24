@@ -1,0 +1,16 @@
+> local storage
+		UUID
+		Parties
+
+UUIDS :
+	connect serv
+	uuid ?
+	if (first time) assign uuid
+	localstorage.uuid = uuid
+
+	join
+		players {uuid, uuid}
+
+	place stone (params, uuid)
+		if uuid 
+

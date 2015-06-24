@@ -38,19 +38,20 @@ var Go_Controller = dejavu.Class.declare({
 	},
 	
 	placeStone: function(x,y,type) {
-		
-		
-		
+				
 		console.log("##### Joueur : "+ this.go.currentPlayer + " #  " + x + " " + y);
 				
 		if ( this.go.model.getIntersection(x,y).isEmpty() ) 
 		{
+			//save game state
+			this.go.model.gobanClone = this.go.model.getSerializedGobanWithHp();
+			//place stone
 			this.go.model.placeStone(x, y, type);
 
 			if (this.isKo())
 			{
 				// HEHE LOL
-				this.go.model.removeStone(x, y);
+				this.go.model.restorePreviousGoban();
 				console.log('KO PRECAPTURE');
 				return false;
 			}
@@ -59,13 +60,13 @@ var Go_Controller = dejavu.Class.declare({
 			
 			if (this.isKo())
 			{
-				this.go.model.removeStone(x, y);
+				this.go.model.restorePreviousGoban();
 				console.log('KO POSTCAPTURE');
 				return false;
 			}
 			else if ( !this.chainHasLiberty(x,y) )
 			{
-				this.go.model.removeStone(x, y);
+				this.go.model.restorePreviousGoban();
 				console.log('NO LIBERTY POST');
 				return false;
 			}
@@ -350,7 +351,7 @@ var Go_Controller = dejavu.Class.declare({
                 }
 			}
 		}
-        console.log(this.shootingFunctions);
+        //console.log(this.shootingFunctions);
         var that = this;
         this.shootingInterval = setInterval( function() {
          //   console.log(that.shootingFunctions); that.shootingFunctions.forEach(function(fn){ fn(); });

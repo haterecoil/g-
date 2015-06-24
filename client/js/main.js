@@ -1,22 +1,107 @@
-var local_only = true;
+var local_only = false;
 
-if (local_only)
-	var go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client,5,5);
-else
-	var go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),5,5);
 
-go.view.init();
 
 if (!local_only)
 {
 	var socket = io('http://localhost:9090');
-	socket.emit('joinRoom',0);
 }
 else
 	var socket = {emit: function(){}, on: function(){}};
 	
 // go.controller.initializeHandlers();
 
+var goParams = {
+	size: 5,
+	roomName: null
+};
+
+var go;
+
+var UUID = {
+	setUserUUID: function (uuid) {
+		localStorage.setItem("uuid", uuid);
+	},
+	getUserUUID: function () {
+		return localStorage.getItem("uuid");
+	},
+	UUIDisEmpty: function () {
+		if ( localStorage.getItem("uuid") ) {
+			return false;
+		} else {
+			return true;
+		}
+	}	
+}
+		
+if ( UUID.UUIDisEmpty() ) {
+	socket.emit('getUUID');
+}
+socket.on('yourUUID', function (data){
+	UUID.setUserUUID(data.uuid);
+});
+
+setInterval(function() { socket.emit('getRooms'); }, 3000);
+
+socket.on('rooms', function(rooms) {
+	$('.lobby__rooms').empty();
+	for( el in rooms ) {
+		console.log(rooms[el].roomName);
+		$('.lobby__rooms').append($('<li data-roomname="'+rooms[el].roomName+'"" ><a href="#"> ' + rooms[el].roomName + ' </a></li>'));
+	};
+});
+
+
+/**
+ * JOIN ROOM
+ */
+$('.lobby__rooms').on('click','a', function() {
+
+	alert('JOIN ROOM : ' + $(this).parent().data('roomname'));
+	
+	goParams.roomName = $(this).parent().data('roomname');
+
+	console.log('join room with name : '+ $(this).parent().data('roomname') + 'var is ' + JSON.stringify(goParams));
+			
+if (local_only) 
+	go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client,goParams);
+else
+	go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),goParams);	
+go.controller.initializeHandlers();
+
+	socket.emit('joinRoom',{roomname: goParams.roomName, uuid: UUID.getUserUUID()});
+
+
+	$('.lobby').hide();
+	$('.game').show();
+	return false;
+});
+
+/**
+ * CREATE ROOM
+ */
+$('.lobby__createRoom').click(function() {
+	var roomname = prompt('Nom ?');
+
+	goParams.roomName = roomname;
+	console.log('create room with name : ' + roomname);
+			
+if (local_only) 
+	go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client,goParams);
+else
+	go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),goParams);
+	go.controller.initializeHandlers();
+
+	socket.emit('createRoom',{roomname: goParams.roomName});
+
+	$('.lobby').hide();
+	$('.game').show();
+});
+
+	/**
+	 *  LOCAL STORAGE
+	 */
+	
 
 
 
@@ -27,9 +112,11 @@ else
 
 socket.on('youAreBlack', iAmBlack);
 socket.on('youAreWhite', iAmWhite);
-socket.on('gameBegins',  gameBegins);
-socket.on('yourTurn',    myTurn);
+// socket.on('gameBegins',  gameBegins);
+// socket.on('yourTurn',    myTurn);
 socket.on('youClicked',    youClicked);
+socket.on('joinError', function(d){console.log(d);})
+
 function iAmBlack() {
 	log('me black lel');
 	go.setMePlayer(1);
@@ -40,13 +127,13 @@ function iAmWhite(){
 	go.setMePlayer(2);
 }
 
-function gameBegins(){
-	log('lets do this');
-			
-}
-function myTurn(){
-	log('fire in my hole');			
-}
+// function gameBegins(){
+// 	log('lets do this');
+
+// }
+// function myTurn(){
+// 	log('fire in my hole');			
+// }
 
 function log(message){
 	$('.log').append(message + '  <br/>');
@@ -116,61 +203,7 @@ function testKo(){
     
     go.controller.recreateShootingIntervals();
 }
-/*
-setTimeout(function() {
-	testKo();
-},100);*/
-/*
 
-socket.on('placeStone',function(params) {
-    params;
-});*/
-
-// rooms
-/*
-
-var Rooms = function () {
-
-	
-	return {
-		handlers:
-			{
-				getRooms: function(rooms) {
-					$('.rooms').empty();
-					rooms.forEach(function (i, el) {
-						$('rooms').append('<li><a href="#"> ' + el.name ' </a></li>');
-					});
-				}
-			},
-		
-	}
-}
-
-*/
-
-setInterval(function() { socket.emit('getRooms'); }, 3000);
-
-socket.on('rooms', function(rooms) {
-	$('.lobby__rooms').empty();
-	rooms.forEach(function (i, el) {
-		$('.lobby__rooms').append($('<li><a href="#"> ' + el.roomName + ' </a></li>').data('roomId',el.roomId));
-	});
-});
-
-$('.lobby__rooms').on('click','a', function() {
-	alert('JOIN ROOM : ' + $(this).parent().data('roomId'));
-	socket.emit('joinRoom',{roomId: $(this).parent().data('roomId')});
-	$('.lobby').hide();
-	$('.game').show();
-	return false;
-});
-
-
-$('.lobby__createRoom').click(function() {
-	socket.emit('createRoom',{roomName: prompt('Nom ?')});
-	$('.lobby').hide();
-	$('.game').show();
-});
 
 
 

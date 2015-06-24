@@ -11,33 +11,65 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
 
     
     placeStone: function(x,y,type) {
+
 		if (this.go.currentPlayer != this.go.mePlayer) return false;
-        if (this.$super(x,y,type)) // appelle placeStone du Go_Controller, et si c'est permis, emit socket
-			socket.emit('placeStone',{x: x, y: y, type: type});
+
+    if (this.$super(x,y,type)) // appelle placeStone du Go_Controller, et si c'est permis, emit socket
+			{console.log(this.go);
+			socket.emit('placeStone',{x: x, y: y, type: type, roomname: this.go.roomName, uuid: UUID.getUserUUID()});}
+			
 		else
 			alert('NOOO');
     },
 	
 	playerPass: function() {
         this.$super() // appelle placeStone du Go_Controller, et si c'est permis, emit socket
-		socket.emit('playerPass');
+		socket.emit('playerPass', {roomname: this.go.roomName, uuid: UUID.getUserUUID()});
     },
 	
 	initializeHandlers: function() {
 		var that = this;
 		socket.on('placeStone',function(data) {
-			that.go.controller.authorityPlaceStone(data.x, data.y, data.type);
+			console.log("received place stone");
+					
+			if (data.roomname == that.go.roomName)
+				that.go.controller.authorityPlaceStone(data.x, data.y, data.type);
+			else
+				alert('un coup est joué sur le goban '+data.roomname+' !');
 		});
 		socket.on('playerPass',function(coords) {
 			that.go.controller.playerPass();
 		});
-		socket.on('update',function(coords) {
-			// ?
-			that.updateHandler();
+		socket.on('update',function(serializedGoban) {
+			that.updateHandler(serializedGoban);
 		});
 		socket.on('nope', function() {
 			alert('Mouvement non autorisé');
 			// @todo remove le dernier coup et switch back player
+		});
+		socket.on('createRoomSuccess', function (data){
+			socket.emit('joinRoom', {roomname: data.roomname, uuid: UUID.getUserUUID()});
+		});
+		socket.on('createRoomError', function (error){
+			alert(error);
+		});
+
+		socket.on('joinRoomError', function (error){
+			alert(error);
+		});
+		socket.on('joinRoomSuccess', function (data){
+			that.go.roomName = data.roomname;
+			socket.emit('whatsMyColor', {roomname: that.go.roomName, uuid: UUID.getUserUUID()});
+			socket.emit('itsMyTurn', {roomname: that.go.roomName, uuid: UUID.getUserUUID()});
+			that.go.view.init();
+		});
+		socket.on('gameBegins', function() {
+			console.log({roomname: that.go.roomName, uuid: UUID.getUserUUID()});
+
+			socket.emit('whatsMyColor', {roomname: that.go.roomName, uuid: UUID.getUserUUID()});
+			socket.emit('itsMyTurn', {roomname: that.go.roomName, uuid: UUID.getUserUUID()});
+
+			that.go.view.init();
 		});
 		
 		this.updateInterval = setInterval(function() {
@@ -45,15 +77,9 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
 		},5000); // on peut faire péter le serv avec des loops
 	},
 
-	updateHandler: function(JSON) {
-		//called every 5 seconds
-		//get a new goban state :
-		//	intersections ( owner, type, health points )
-		//	
-		var goban = JSON.goban
-		this.go.goban = goban;
+	updateHandler: function(serializedGoban) {
+		this.go.model.setGobanFromSerialized(serializedGoban);
 		this.go.view.render();
-
 	}
 
 

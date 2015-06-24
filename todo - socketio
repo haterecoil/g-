@@ -1,3 +1,25 @@
+JEUDI <3
+
++++	Tableau "parties en cours par joueur"
+
++++	Flow Ui : de la liste au jeu, du jeu à la liste
+
+++	Nettoyer
+++	Commenter
+
++++	Appliquer UI KIT
+
++	  Historique des coups pour une partie
+
++	  Notifications
+
++++	Towers
+
+++	Mode synchrone for extra fun ?
+
++ merges...
+
+
 
 /**
  * Socket IO 

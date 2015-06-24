@@ -8,9 +8,11 @@ var Go = dejavu.Class.declare({
 	currentPlayer: null,
 	notCurrentPlayer: null,
 	playerPassed: 0,
+	roomName: null,
 	
-	initialize: function(M,V,C,size) {
-		this.size = size;
+	initialize: function(M,V,C,params) {
+		this.size = params.size;
+		this.roomName = params.roomName;
 		
 		M.setGo(this);
 		M.createGoban();
