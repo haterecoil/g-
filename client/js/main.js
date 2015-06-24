@@ -1,11 +1,21 @@
+var local_only = true;
 
-var go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),5,5);
+if (local_only)
+	var go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client,5,5);
+else
+	var go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),5,5);
 
 go.view.init();
-var socket = io('http://localhost:9090');
 
-socket.emit('joinRoom',0);
-go.controller.initializeHandlers();
+if (!local_only)
+{
+	var socket = io('http://localhost:9090');
+	socket.emit('joinRoom',0);
+}
+else
+	var socket = {emit: function(){}, on: function(){}};
+	
+// go.controller.initializeHandlers();
 
 
 

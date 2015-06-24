@@ -11,6 +11,7 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
 
     
     placeStone: function(x,y,type) {
+		if (this.go.currentPlayer != this.go.mePlayer) return false;
         if (this.$super(x,y,type)) // appelle placeStone du Go_Controller, et si c'est permis, emit socket
 			socket.emit('placeStone',{x: x, y: y, type: type});
 		else
