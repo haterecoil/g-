@@ -65,8 +65,8 @@ var Go_View_HTML = dejavu.Class.declare({
 	},
 
 	setListeners: function(){
-		var divs = $('.intersection');
-		var divsNumber = $('.intersection').length;
+		var divs = $('.intersections__intersection');
+		var divsNumber = $('.intersections__intersection').length;
 		var that = this;
 		for ( var i = 0; i < divsNumber; i++){
 			divs[i].addEventListener('click', function(el){
