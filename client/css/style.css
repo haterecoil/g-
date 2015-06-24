@@ -5,7 +5,8 @@
 * { vertical-align: bottom; }
 
 
-.goban--borders { position: absolute; left: -25px; top: -25px;  }
+.goban--intersections { position: relative; z-index: 2; }
+.goban--borders { position: absolute; left: -25px; top: -25px; z-index: 1; }
 .borders__border { display: inline-block; width: 50px; height: 50px; border: solid 1px red; 
 	text-align: center;padding-top: 15px;box-sizing: border-box; }
 

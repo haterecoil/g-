@@ -316,6 +316,10 @@ var Go_Controller = dejavu.Class.declare({
 	},
     
     recreateShootingIntervals: function() {
+		
+		console.log('SHOOTING INTERVALS IGNORED');
+		return;
+		
         // ça m'a pris 30 minutes, me fais pas une axelade
         if (this.shootingInterval !== null)
             clearInterval(this.shootingInterval);
