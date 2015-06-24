@@ -122,6 +122,7 @@ io.sockets.on('connection', function(socket) {
 			if ( roomName in rooms ) {
 				if (rooms[roomName].players.length >= 2) {
 					if ( playerInRoom(data.roomname, data.uuid) ) {
+						socket.join(rooms[roomName].room_id);
 						socket.emit('joinRoomSuccess', {roomname: data.roomname});
 						socket.emit('update', rooms[roomName].go.model.getSerializedGobanWithHp());
 						return;
@@ -192,7 +193,17 @@ io.sockets.on('connection', function(socket) {
 						
 				if ( data.uuid == rooms[data.roomname].currentPlayer )
 					socket.emit('yourTurn');
+
+			} else {
+				console.log('invalid :o');
+				console.log(data);
+						
 			}
+		});
+
+		socket.on('update', function (data) {
+			socket.emit('update', rooms[data.roomname].go.model.getSerializedGobanWithHp());
+
 		});
 
 		socket.on('createRoom', function (data){
@@ -207,22 +218,30 @@ io.sockets.on('connection', function(socket) {
     socket.on('placeStone', function (params) {
 			console.log('placestone');
 			console.log(JSON.stringify(params));
+			console.log(rooms[params.roomname]);
+					
 					
 			if ( !rooms[params.roomname] ) {
 				socket.emit('joinRoomError', 'pas de room un cinomé'+params.roomname);
 				return;
 			}
-			if ( !params.uuid in rooms[params.roomname].players ){
+			else if ( !params.uuid in rooms[params.roomname].players ){
 				socket.emit('joinRoomError', 'vous flou dans la room :x');
 				return;
 			}		
-					
-			if (!rooms[params.roomname].go.controller.placeStone(params.x,params.y,params.type))
+			else if ( params.uuid != rooms[params.roomname].currentPlayer ){
 				socket.emit('nope');
-			else
-				console.log(io.sockets.adapter.rooms[rooms[params.roomname].room_id]);
-						
-				socket.broadcast.to(rooms[params.roomname].room_id).emit('placeStone',params);
+				return;
+			}
+			else if (!rooms[params.roomname].go.controller.placeStone(params.x,params.y,params.type)){
+				socket.emit('nope');
+				return;
+			}
+			
+			changeCurrentPlayer(rooms[params.roomname]);
+
+			console.log(io.sockets.adapter.rooms[rooms[params.roomname].room_id]);			
+			socket.broadcast.to(rooms[params.roomname].room_id).emit('placeStone',params);
     });
 	
 	socket.on('playerPass', function (params) {
@@ -250,9 +269,14 @@ function requestIsValid(data){
 		data.uuid = data.uuid.toString();
 	}
 	if ( rooms[data.roomname] ) {
-		if (playerInRoom(data.roomname, data.uuid))
+		if (playerInRoom(data.roomname, data.uuid)){
 			return true;
+		}
 	}
+	console.log('not valid : ');
+	console.log(data);
+			
+			
 	return false;
 }
 
@@ -260,6 +284,13 @@ function playerInRoom(room, uuid) {
 	if ( uuid == rooms[room].players[0] || uuid == rooms[room].players[1] )
 		return true;
 	return false;
+}
+
+function changeCurrentPlayer(room) {
+	if ( room.currentPlayer == room.blackPlayer ) 
+		room.currentPlayer = room.whitePlayer;
+	else
+		room.currentPlayer = room.blackPlayer;
 }
 
 Object.size = function(obj) {

@@ -46,6 +46,7 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
 		socket.on('nope', function() {
 			alert('Mouvement non autorisé');
 			// @todo remove le dernier coup et switch back player
+			socket.emit('update',{roomname: that.go.roomName}); 
 		});
 		socket.on('createRoomSuccess', function (data){
 			socket.emit('joinRoom', {roomname: data.roomname, uuid: UUID.getUserUUID()});
@@ -71,14 +72,13 @@ var Go_Controller_Client_Socket = dejavu.Class.declare({
 
 			that.go.view.init();
 		});
-		
-		this.updateInterval = setInterval(function() {
-			socket.emit('update');
-		},5000); // on peut faire péter le serv avec des loops
+
 	},
 
 	updateHandler: function(serializedGoban) {
 		this.go.model.setGobanFromSerialized(serializedGoban);
+		socket.emit('whatsMyColor', {roomname: this.go.roomName, uuid: UUID.getUserUUID()});
+		socket.emit('itsMyTurn', {roomname: this.go.roomName, uuid: UUID.getUserUUID()});		
 		this.go.view.render();
 	}
 
