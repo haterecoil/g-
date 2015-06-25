@@ -67,6 +67,7 @@ if (local_only)
 	go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client,goParams);
 else
 	go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),goParams);	
+
 go.controller.initializeHandlers();
 
 	socket.emit('joinRoom',{roomname: goParams.roomName, uuid: UUID.getUserUUID()});
@@ -204,6 +205,41 @@ function testKo(){
     go.controller.recreateShootingIntervals();
 }
 
+
+
+// For PASS
+var pass = document.querySelector('.button-pass');
+pass.addEventListener("click", checkPass);
+
+function checkPass() {
+   document.querySelector(".pass-warning").style.transform = "scale(1)";
+}
+//Validate or not
+var optionPass = document.querySelector('.option-pass');
+var validatePass = optionPass.getElementsByTagName('a');
+validatePass[0].addEventListener("click", validatePass);
+validatePass[1].addEventListener("click", validatePass);
+
+function validatePass(){
+	document.querySelector(".pass-warning").style.transform= "scale(0)";
+}
+
+// For ABANDON
+var pass = document.querySelector('.button-abandon');
+pass.addEventListener("click", checkAbandon);
+
+function checkAbandon() {
+   document.querySelector(".abandon-warning").style.transform = "scale(1)";
+}
+//Validate or not
+var optionPass = document.querySelector('.option-abandon');
+var validateAbandon = optionPass.getElementsByTagName('a');
+validatePass[0].addEventListener("click", validateAbandon);
+validatePass[1].addEventListener("click", validateAbandon);
+
+function validateAbandon(){
+	document.querySelector(".abandon-warning").style.transform= "scale(0)";
+}
 
 
 

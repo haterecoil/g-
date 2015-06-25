@@ -21,22 +21,84 @@
     <link rel="stylesheet" href="./css/style.css">
 
 </head>
-<body>
+<body style="zoom: 0.4">
+    <div class="player">
+        <div class="me">
+            <div class="name">MOI</div>
+            <div class="score">3</div>
+        </div>
+        <div class="other">
+            <div class="name">OTHERS</div>
+            <div class="score">10</div>
+        </div>
+    </div>
+
+    <div class="lobby">
+        <ul class="lobby__rooms"></ul>
+        <a href="#" class="lobby__createRoom">Create room</a>
+    </div>
+
+    <div class="game">
+        <div class="goban-container"></div>
+    </div>
+
+    <div class="stone">
+        <svg x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+            <g>
+                <path fill="#27AE60" d="M50,5c24.813,0,45,20.187,45,45c0,24.813-20.187,45-45,45C25.187,95,5,74.813,5,50C5,25.187,25.187,5,50,5
+                M50,0C22.386,0,0,22.386,0,50c0,27.614,22.386,50,50,50c27.614,0,50-22.386,50-50C100,22.386,77.614,0,50,0L50,0z"/>
+                <text text-anchor="middle" x="50px" y="50px" fill="#27AE60">∞</text>
+            </g>
+        </svg>
+
+        <svg x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+            <g>
+                 <path fill="#27AE60" d="M50.002,5.511C64.257,12.323,95,30.975,95,50c0,24.813-20.187,45-45,45C25.187,95,5,74.813,5,50
+                C5,31.01,35.749,12.335,50.002,5.511 M50,0C50,0,0,22.386,0,50c0,27.614,22.386,50,50,50c27.614,0,50-22.386,50-50
+                C100,22.386,50,0,50,0L50,0z"/>
+                <text text-anchor="middle" x="50px" y="50px" fill="#27AE60">3</text>
+            </g>
+        </svg>
+
+        <svg version="1.1" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+        <g>
+            <path fill="#27ae60" d="M50.002,5.511C64.257,12.323,95,30.975,95,50c0,18.992-30.751,37.667-45.002,44.488C35.744,87.677,5,69.025,5,50
+                C5,31.009,35.749,12.335,50.002,5.511 M50,0C50,0,0,22.386,0,50s50,50,50,50s50-22.386,50-50S50,0,50,0L50,0z"/>
+        </g>
+        </svg>
+
+        <svg x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+            <g>
+                <path fill="#27AE60" d="M50,7.071L92.929,50L50,92.929L7.071,50L50,7.071 M50,0L0,50l50,50l50-50L50,0L50,0z"/>
+                <text text-anchor="middle" x="50px" y="50px" fill="#27AE60">1</text>
+            </g>
+</svg>
 
 
-	<div class="lobby">
-		<ul class="lobby__rooms"></ul>
-		<a href="#" class="lobby__createRoom">Create room</a>
-	</div>
+    </div>
 
-	<div class="game">
-		<div class="goban-container"></div>
-		<div class="goban-controls"></div>
-	</div>
-	
+    <div class="game-option">
+        <a class="button-abandon">LEAVE</a>
+        <a class="button-pass">PASS</a>
+    </div>
+
+    <div class="warning-box pass-warning">
+
+        <div class="option option-pass">
+            <a href="">Cancel</a>
+            <a href="">Pass</a>
+        </div>
+    </div>
+
+    <div class="warning-box abandon-warning">
+        <div class="option option-abandon"> 
+            <a href="">Cancel</a>
+            <a href="">Abandon</a>
+        </div>
+    </div>
+    
 <!--
 <button onclick="connect" >Connect to room</button>-->
-
 <p class='log'></p>
     <script type="text/javascript" src="js/main.js"></script>
 

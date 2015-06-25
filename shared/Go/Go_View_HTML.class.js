@@ -5,6 +5,9 @@
 var Go_View_HTML = dejavu.Class.declare({
 	$extends: Go_View,
 
+	/* Go_View_HTML.init()
+	 *   set up DOM view and event listeners on DOM
+	 */
 	init: function() {
 		var goban = this.go.model.getGoban();
 //		$('.goban-container').empty();
@@ -21,16 +24,19 @@ var Go_View_HTML = dejavu.Class.declare({
 		
 		this.render();
 
-		$pass = $('<button class="pass-my-turn">passer</button>');
-		$('.goban-controls').append($pass);
+		$pass = $('<a class="pass">Yes</a>');
+		$('.pass-warning .option').append($pass);
 
 		$pass.click(this.go.controller.playerPass.bind(this));
 
 		this.setListeners();
 	},
 	
+	/**
+	 * Go_View_HTML.render()
+	 *   refresh goban's DOM
+	 */
 	render: function() {
-		
 		var goban = this.go.model.getGoban();
 		$('.goban-container').empty();
 		$div = $('<div class="goban--intersections" style="xwidth:'+goban.length*52+'px;"></div>');
@@ -64,6 +70,10 @@ var Go_View_HTML = dejavu.Class.declare({
 		console.log('rendered');
 	},
 
+	/**
+	 * Go_View_HTML.setListeners()
+	 *   set placeStone() events on divs
+	 */
 	setListeners: function(){
 		var divs = $('.intersections__intersection');
 		var divsNumber = $('.intersections__intersection').length;
@@ -77,6 +87,10 @@ var Go_View_HTML = dejavu.Class.declare({
 				
 	},
 	
+	/**
+	 * Go_View_HTML.placeStone()
+	 * .render() when a stone was set
+	 */
 	placeStone: function() {
 		this.render();
 	}

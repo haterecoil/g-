@@ -1,7 +1,10 @@
 //en bas, dictionnaire des fonctions
+/**
+ * Base Go_Controller class. Is shared and extended 
+ * by both client and server, mobile or desktop
+ */
 var Go_Controller = dejavu.Class.declare({
 	$extends: Go_MvcComponent,
-	pendingStone: null, // emplacement de la pierre que l'on tente de placer (utile pour les vérifications sur chaînes adjacentes, captures, etc.)
   shootingInterval: null,
 	history: [],
     
@@ -14,6 +17,11 @@ var Go_Controller = dejavu.Class.declare({
 		this.history.push({nbPl: [null,this.go.model.countPlayer(1),this.go.model.countPlayer(2)], goban: 		this.go.model.getSerializedGoban()});
 	},
 	
+	/**
+	 * Go_Controller.playerCanPlay() asserts the player is authorized
+	 * to play
+	 * @return {bool} 
+	 */
 	playerCanPlay: function() {
 		for (var x=0; x<this.go.size; x++)
 		{
@@ -37,6 +45,15 @@ var Go_Controller = dejavu.Class.declare({
 		return false;
 	},
 	
+	/**
+	 * Event triggered when a player tries to place a stone
+	 * Place a stone, try to capture, verify ko's situation, and authorize 
+	 * or not the play
+	 * @param  {int} x    x position of stone
+	 * @param  {int} y    y position of stone
+	 * @param  {obj} type type of stone / turret
+	 * @return {bool}
+	 */
 	placeStone: function(x,y,type) {
 				
 		console.log("##### Joueur : "+ this.go.currentPlayer + " #  " + x + " " + y);
@@ -48,13 +65,14 @@ var Go_Controller = dejavu.Class.declare({
 			//place stone
 			this.go.model.placeStone(x, y, type);
 
-			if (this.isKo())
-			{
-				// HEHE LOL
-				this.go.model.restorePreviousGoban();
-				console.log('KO PRECAPTURE');
-				return false;
-			}
+			// @todo ce ko est inutile ?
+			// if (this.isKo())
+			// {
+			// 	// Ko before there 
+			// 	this.go.model.restorePreviousGoban();
+			// 	console.log('KO PRECAPTURE');
+			// 	return false;
+			// }
 			
 			this.tryCapture(x, y, this.go.currentPlayer);
 			
@@ -70,6 +88,8 @@ var Go_Controller = dejavu.Class.declare({
 				console.log('NO LIBERTY POST');
 				return false;
 			}
+			//everything is okay
+			//trigger "hasPlayed" event, store the move
 			else
 			{
 				this.playerHasPlayed();
@@ -95,7 +115,6 @@ var Go_Controller = dejavu.Class.declare({
 	 */
 	chainHasLiberty: function(x, y){
 		var visitedArr = [];
-		var pendingStone = this.pendingStone;
 
 		/**
 		 * intersectionVisited returns true if a cell has already been visited
@@ -105,7 +124,6 @@ var Go_Controller = dejavu.Class.declare({
 		function intersectionVisited(intersectionCoords){
 			for (var i = 0, len = visitedArr.length; i < len; i++){
 				if (  intersectionCoords[0] === visitedArr[i][0] && intersectionCoords[1] === visitedArr[i][1]    
-//					||  (intersectionCoords[0] === pendingStone[0]  && intersectionCoords[1] === pendingStone[1])
 				   ) { 
 					return true;
 				}
@@ -149,7 +167,6 @@ var Go_Controller = dejavu.Class.declare({
 	
 		var player = this.go.model.getIntersection(x,y).getOwner();
 		var success = recursivelyCheckIfChainHasLiberties(x, y, player);
-		//console.log("has Liberty ? " + success);
 			
 		return success;
 	},
@@ -174,8 +191,6 @@ var Go_Controller = dejavu.Class.declare({
 		}
 
 		function aggregateStones(x, y, player){
-
-			////console.log(" ###### AGGREGATE STONES ######");
 							
 			//chope les coords des voisins
 			var neighbours = that.go.model.getNeighboursCoords(x, y);
@@ -189,18 +204,12 @@ var Go_Controller = dejavu.Class.declare({
 						
 				//si l'intersection n'a pas été visitée
 				if ( !intersectionVisited(coords[0], coords[1]) ){
-					////console.log("owner of inter : " + intersection.getOwner());
-					////console.log("coords : " +coords[0]+" "+coords[1]);
-					//visitedArr.push(intersection);
 							
 					if ( intersection.getOwner() === player) {  
-						////console.log("found chain part :" +coords[0]+" "+coords[1] );
-						//chain.push([coords[0], coords[1]]);
 						return aggregateStones(coords[0], coords[1], player);
 					}			
 				}		
 			});
-			////console.log(chain);
 					
 			return chain;
 		}
@@ -216,16 +225,11 @@ var Go_Controller = dejavu.Class.declare({
 	 * @return {[type]}   [description]
 	 */
 	captureChain: function(x, y, playerCapturing){
-		//console.log(" [call] getChainFC : "+x+" "+y+" pl:" + this.getOtherPlayer(playerCapturing));
 		
 		//détecter la chaine dont fait partie la pierre incriminée via exploration
 		var chain = this.getChainFromCoords(x, y, this.getOtherPlayer(playerCapturing)); // @todo pourquoi parfois on passe "player" et parfois on récup direct via this.go(not)CurrentPlayer?
 		
 		// @todo est-ce que getChainfromCoords devrait pas plutôt renvoyer des intersections ? @morgan
-
-		//console.log(this.go.currentPlayer);
-				
-		//console.log(chain);
 				
 		//supprimer chaque pierre
 		var that = this;
@@ -245,15 +249,12 @@ var Go_Controller = dejavu.Class.declare({
 	neighboursAreEnemiesOf: function(x, y, player){
 		var neighbours = this.go.model.getNeighbours(x, y);
 		var enemies = 0;
-		//console.log("voisins : ");
-			//console.log(neighbours);
 					
 		neighbours.forEach(function(cell){					
 			if ( !cell.isEmpty() && cell.getOwner() != player ){
 				enemies++;
 			}
 		});
-		//console.log("neighbours are ennemies ? " + (enemies >= neighbours.length));
 				
 		return enemies >= neighbours.length;
 	},
@@ -264,15 +265,14 @@ var Go_Controller = dejavu.Class.declare({
 	},
 	
 	nextPlayer: function(){
-		// if (x) this.go.model.placeStone(x, y); @todo @morgan t'as fait quoi
 			
 		if ( this.go.playerPassed >= 2 ) {
 			this.endOfGame();
 		}
 		
 		this.go.changeCurrentPlayer();
-		
-		if (!this.playerCanPlay()) // @todo pas sûr si c'est le meilleur emplacement
+		//@todo true end game handler
+		if (!this.playerCanPlay()) // @todo pas sûr si c'est le meilleur emplacement 
 		{
 			console.log('FIN DE PARTIE');
 			alert('FIN DE PARTIE');
@@ -312,7 +312,6 @@ var Go_Controller = dejavu.Class.declare({
 		}
 		
 		return false;
-		
 		
 	},
     
@@ -385,7 +384,7 @@ var Go_Controller = dejavu.Class.declare({
 	tryCapture: function(x, y, player) {
 
 		var that = this;
-		var success = false;
+
 		console.log("## TryCapture, joueur "+player+" : " + x +" "+ y);
 
 		function catchThemAll(x, y) {
@@ -398,21 +397,23 @@ var Go_Controller = dejavu.Class.declare({
 				if (that.go.model.getIntersection(coords[0],coords[1]).getOwner() === 0) return;
 				// if ennemy neighbour chain has no liberty
 				if ( that.go.model.getIntersection(coords[0],coords[1]).getOwner() !== that.player && !that.chainHasLiberty(coords[0], coords[1]) ) { // @todo il faudrait pouvoir merge les tableaux de cellules visitées si les chaînes de deux neighbours se rencontrent (optimisation)
-					//console.log("[call] captureChain x"+coords[0]+" y"+coords[1] + " pl:" + player);
+
 					console.log('Capture chain ' + coords[0] + ' ' + coords[1]);
 					that.captureChain(coords[0], coords[1], player); // qu'est-ce que t'as fumé morgan putain
-					//console.log(this.go.currentPlayer+" captured inter " + coords[0] + " " + coords[1]);
 
-					success = true;
 				}
 			});	
 		}
-		
+
 		//si oui et que no ko alors capture
 		catchThemAll(x, y); 
-		return success;// @todo @morgan à quoi sert ce return?
+
 	},
 
+	/**
+	 * Go_Controller.playerPass() increments playerPassed Counter and calls nextplayer
+	 * @return {[type]} [description]
+	 */
 	playerPass: function(){
 				
 		this.go.playerPassed++;
@@ -421,8 +422,6 @@ var Go_Controller = dejavu.Class.declare({
 		console.log(this.go.model.getSerializedGoban());
 		console.log(this.go.playerPassed);
 				
-				
-				
 		if ( this.go.playerPassed >= 2 ) {
 			this.go.controller.endOfGame();
 		}
@@ -430,6 +429,10 @@ var Go_Controller = dejavu.Class.declare({
 				
 	},
 
+	/**
+	 * Go_Controller.playerHasPlayed() 
+	 * @return {[type]} [description]
+	 */
 	playerHasPlayed: function(){
 		this.resetPlayerPassedCounter();
 		this.nextPlayer();
