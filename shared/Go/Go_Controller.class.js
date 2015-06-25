@@ -281,6 +281,8 @@ var Go_Controller = dejavu.Class.declare({
 		
 		this.makeTheTurretsShoot();
 		
+		this.go.woopWoopCounter++;
+		
 		this.go.view.render(); // @todo on sait pas si on render toute la queue ou si le modèle render au fur et à mesure
 		console.log("Joueur suivant ! : " + this.go.currentPlayer);
     

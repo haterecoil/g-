@@ -9,6 +9,7 @@ var Go = dejavu.Class.declare({
 	notCurrentPlayer: null,   //(int) : indicates who should not play
 	playerPassed: 0,          //(int) : stores the number of passed turn
 	roomName: null,						//(str) : name of current game room
+	woopWoopCounter: 0,
 	
 	/**
 	 * GO.initialize() create a go game from given M/V/C and params
