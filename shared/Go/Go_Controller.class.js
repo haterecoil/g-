@@ -282,7 +282,8 @@ var Go_Controller = dejavu.Class.declare({
 		this.go.view.render(); // @todo on sait pas si on render toute la queue ou si le modèle render au fur et à mesure
 		console.log("Joueur suivant ! : " + this.go.currentPlayer);
     
-    this.recreateShootingIntervals();   
+    	// this.recreateShootingIntervals();   
+		this.makeTheTurretsShoot();
         
 	},
 	
@@ -314,8 +315,15 @@ var Go_Controller = dejavu.Class.declare({
 		return false;
 		
 	},
-    
-    recreateShootingIntervals: function() {
+	
+	makeTheTurretsShoot: function() {
+		
+		// normale : 4
+		// 1 direction que tu choisis  3
+		// 2 directions horizontale / verticale 2 
+		// 4 directions 1
+		// les tours ont des pdv différents
+		// 
 		
 		console.log('SHOOTING INTERVALS IGNORED');
 		return;
@@ -363,6 +371,55 @@ var Go_Controller = dejavu.Class.declare({
             that.go.view.render();
         } , 1000);   
     },
+    
+    /*recreateShootingIntervals: function() {
+		
+		console.log('SHOOTING INTERVALS IGNORED');
+		return;
+		
+        // ça m'a pris 30 minutes, me fais pas une axelade
+        if (this.shootingInterval !== null)
+            clearInterval(this.shootingInterval);
+        var shootingFunctions = [];
+        for (var x = 0; x<this.go.size; x++)
+		{
+			for (var y = 0; y<this.go.size; y++)
+			{
+
+				if (this.go.model.getIntersection(x,y).getOwner() == this.go.notCurrentPlayer && this.go.model.getIntersection(x,y).getType() == Go_Intersection.STONE_TURRET4)
+                {
+                    var shootingFunctionGenerator = function(x,y) {
+                        var shooter = this.go.model.getIntersection(x,y).getOwner();
+                        var neighbours = this.go.model.getNeighbours(x,y);
+                        return function() {
+                            
+                                neighbours.forEach(function(neighbour){
+									// J'AIME LE CODE ù.ù
+									// HOURRI \i\
+                                    if (!neighbour.isEmpty() && neighbour.getOwner() != shooter && !this.isKorama(x,y))
+                                        neighbour.getHit();
+                                });
+                            };
+                    };
+                    
+                    shootingFunctions.push(shootingFunctionGenerator(x,y));
+                    
+                }
+			}
+		}
+        //console.log(this.shootingFunctions);
+        var that = this;
+        this.shootingInterval = setInterval( function() {
+         //   console.log(that.shootingFunctions); that.shootingFunctions.forEach(function(fn){ fn(); });
+            
+            for (var i = 0; i<shootingFunctions.length; i++)
+            {
+                
+                shootingFunctions[i]();
+            }
+            that.go.view.render();
+        } , 1000);   
+    },*/
     
 	
 	isEmpty: function(cell) {
