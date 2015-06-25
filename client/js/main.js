@@ -87,7 +87,7 @@ $('.lobby__createRoom').click(function() {
 	goParams.roomName = roomname;
 	console.log('create room with name : ' + roomname);
 
-	if (local_only) 
+	if (local_only) // nagui
 	{
 		go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client,goParams);
 		go.view.render();
