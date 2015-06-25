@@ -39,8 +39,8 @@ var Go_View_HTML = dejavu.Class.declare({
 	render: function() {
 		var goban = this.go.model.getGoban();
 		$('.goban-container').empty();
-		$div = $('<div class="goban--intersections" style="xwidth:'+goban.length*52+'px;"></div>');
-		$divbg = $('<div class="goban--borders" style="xwidth:'+goban.length*52+'px;"></div>');
+		$div = $('<div class="goban--intersections"></div>');
+		$divbg = $('<div class="goban--borders"></div>');
 		for (var y = 0; y<goban.length+1; y++)
 		{
 			
@@ -48,13 +48,9 @@ var Go_View_HTML = dejavu.Class.declare({
 				{
 					if (y < goban.length)
 					{
-						$div.append('<div class="intersections__intersection player'+goban[x][y].getOwner()+' type'+goban[x][y].getType()+'" data-x="'+x+'" data-y="'+y+'">'+goban[x][y].getType()+'<br/>' +goban[x][y].getHP()+'</div>');
-						$divbg.append('<div class="borders__border"></div>');
+						$div.append('<div class="intersections__intersection player'+goban[x][y].getOwner()+' type'+goban[x][y].getType()+'" data-x="'+x+'" data-y="'+y+'" style="width:'+(100/goban.length)+'%;">'+goban[x][y].getType()+'<br/>' +goban[x][y].getHP()+'</div>');
 					}
-					else
-					{
-						$divbg.append('<div class="borders__border"></div>');	
-					}
+					$divbg.append('<div class="borders__border"></div>');
 				}
 			
 			$divbg.append('<div class="borders__border"></div>');
@@ -65,6 +61,10 @@ var Go_View_HTML = dejavu.Class.declare({
 		}
 		$('.goban-container').append($div);
 		$('.goban-container').append($divbg);
+		$('.intersections__intersection, .borders__border').css('height', $('.intersections__intersection').eq(0).width());
+		$('.borders__border').css('width', $('.intersections__intersection').width());
+		$('.borders__border').css({ top: -$('.borders__border').eq(0).height()/2,
+								    left: -$('.borders__border').eq(0).width()/2 });
 
 		this.setListeners();
 		console.log('rendered');
@@ -74,15 +74,12 @@ var Go_View_HTML = dejavu.Class.declare({
 	 * Go_View_HTML.setListeners()
 	 *   set placeStone() events on divs
 	 */
-	setListeners: function(){
-		var divs = $('.intersections__intersection');
-		var divsNumber = $('.intersections__intersection').length;
+	setListeners: function(){		
 		var that = this;
-		for ( var i = 0; i < divsNumber; i++){
-			divs[i].addEventListener('click', function(el){
-				that.go.controller.placeStone( parseInt(el.target.dataset.x), parseInt(el.target.dataset.y), Go_Intersection.STONE_NORMAL);						
-			});
-		}
+		$('.intersections__intersection').click(function () {
+			that.go.controller.placeStone( parseInt($(this).data('x')), parseInt($(this).data('y')), Go_Intersection.STONE_NORMAL);
+			return false;
+		});
 		
 				
 	},

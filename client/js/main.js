@@ -1,4 +1,4 @@
-var local_only = false;
+var local_only = true;
 
 
 
@@ -86,17 +86,22 @@ $('.lobby__createRoom').click(function() {
 
 	goParams.roomName = roomname;
 	console.log('create room with name : ' + roomname);
-			
-if (local_only) 
-	go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client,goParams);
-else
-	go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),goParams);
-	go.controller.initializeHandlers();
 
-	socket.emit('createRoom',{roomname: goParams.roomName});
+	if (local_only) 
+	{
+		go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client,goParams);
+		go.view.render();
+	}
+	else
+	{
+		go = new Go(new Go_Model_Standard,new Go_View_HTML,new Go_Controller_Client_Socket(socket),goParams);
+		go.controller.initializeHandlers();
 
-	$('.lobby').hide();
-	$('.game').show();
+		socket.emit('createRoom',{roomname: goParams.roomName});
+
+		$('.lobby').hide();
+		$('.game').show();
+	}
 });
 
 	/**

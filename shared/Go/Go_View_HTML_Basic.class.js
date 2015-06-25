@@ -1,9 +1,10 @@
 // lisetners à l'éinteirur de l vue
 
-var Go_View_HTML = dejavu.Class.declare({
+var Go_View_HTML_Basic = dejavu.Class.declare({
 	$extends: Go_View,
 	
 	render: function() {
+		console.log('baisc');
 		var goban = this.go.model.getGoban();
 		$('body').empty();
 		$pre = $('<pre></pre>');
