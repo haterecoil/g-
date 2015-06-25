@@ -76,7 +76,7 @@ body{ background: #0a0a0d; width: 100%; height: 100%;}
 /*.goban-container {border-top: 3px solid #fff; border-bottom: 3px solid #fff; position: relative; white-space: pre; overflow: hidden; display: inline-block; }*/
 .goban-container { position: relative; white-space: pre; overflow: hidden; }
 .intersections__intersection { display: inline-block; width: 50px; height: 50px; border: solid 1px black; 
-    text-align: center;padding-top: 15px;box-sizing: border-box; border-radius: 100%; }
+    text-align: center;padding-top: 15px;box-sizing: border-box; /*border-radius: 100%;*/ vertical-align: bottom; }
 
 * { vertical-align: bottom; }
 
@@ -88,9 +88,9 @@ body{ background: #0a0a0d; width: 100%; height: 100%;}
 .goban--borders { position: absolute; left: 0; top: 0; bottom: 0; z-index: 1; }
 .borders__border { position: relative; width: 50px; height: 50px; border: solid 1px red; 
 	text-align: center; padding-top: 15px;box-sizing: border-box; display: inline-block; vertical-align: bottom; }
-
+/*
 .player1 { background: #27ae60;}
-.player2 { background:#c0392b;}
+.player2 { background:#c0392b;}*/
 
 .type1 {  }
 .type2 { border: 1px solid red; }

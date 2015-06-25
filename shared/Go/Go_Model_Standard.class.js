@@ -172,7 +172,45 @@ var Go_Model_Standard = dejavu.Class.declare({
 		if ( x-1 >= 0 ) neighbours.push(this.goban[x-1][y  ]);				
 		return neighbours;
 	},
+	
+	getHorizontalNeighbours: function(x,y) {
+		var neighbours = [];
+		if ( x+1 <= this.go.size-1 ) neighbours.push(this.goban[x+1][y  ]);
+		if ( x-1 >= 0 ) neighbours.push(this.goban[x-1][y  ]);				
+		return neighbours;
+	},
+	
+	getVerticalNeighbours: function(x,y) {
+		var neighbours = [];
+	  	if ( y-1 >= 0 ) neighbours.push(this.goban[x  ][y-1]);
+		if ( y+1 <= this.go.size-1 ) neighbours.push(this.goban[x  ][y+1]);
+		return neighbours;
+	},
 
+	getLeftNeighbour: function(x,y) {
+		var neighbours = [];
+		if ( x-1 >= 0 ) neighbours.push(this.goban[x-1][y  ]);				
+		return neighbours;
+	},
+	
+	getRightNeighbour: function(x,y) {
+		var neighbours = [];
+		if ( x+1 <= this.go.size-1 ) neighbours.push([x+1,y  ]);
+		return neighbours;
+	},
+	
+	getBottomNeighbour: function(x,y) {
+		var neighbours = [];
+		if ( y+1 <= this.go.size-1 ) neighbours.push(this.goban[x  ][y+1]);	
+		return neighbours;
+	},
+	
+	getTopNeighbour: function(x,y) {
+		var neighbours = [];
+		if ( y-1 >= 0 ) neighbours.push(this.goban[x  ][y-1]);
+		return neighbours;
+	},
+	
 	getNeighboursCoords: function(x,y) {
 		var neighbours = [];
 	  if ( y-1 >= 0 ) neighbours.push([x  ,y-1]);

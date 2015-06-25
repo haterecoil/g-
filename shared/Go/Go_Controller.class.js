@@ -282,7 +282,7 @@ var Go_Controller = dejavu.Class.declare({
 		this.makeTheTurretsShoot();
 		
 		this.go.woopWoopCounter++;
-		
+		console.log('np');
 		this.go.view.render(); // @todo on sait pas si on render toute la queue ou si le modèle render au fur et à mesure
 		console.log("Joueur suivant ! : " + this.go.currentPlayer);
     
@@ -330,9 +330,41 @@ var Go_Controller = dejavu.Class.declare({
 				console.log('zoub');
 				if (this.go.model.getIntersection(x,y).isATurret())
                 {
+					var neighbours = [];
+					switch(this.go.model.getIntersection(x,y).getType())
+					{
+						case Go_Intersection.STONE_TURRET4:
+							alert('Obsolete TURRET4 in setOwner XX');
+							break;
+						case Go_Intersection.TURRET_UNI_UP:
+							neighbours = this.go.model.getUpNeighbour(x,y);
+							break;
+						case Go_Intersection.TURRET_UNI_RIGHT:
+							neighbours = this.go.model.getRightNeighbour(x,y);
+							break;
+						case Go_Intersection.TURRET_UNI_DOWN:
+							neighbours = this.go.model.getDownNeighbour(x,y);
+							break;
+						case Go_Intersection.TURRET_UNI_LEFT:
+							neighbours = this.go.model.getLeftNeighbour(x,y);
+							break;
+						case Go_Intersection.TURRET_DUO_HORIZONTAL:
+							neighbours = this.go.model.getHorizontalNeighbours(x,y);
+							break;
+						case Go_Intersection.TURRET_DUO_VERTICAL:
+							neighbours = this.go.model.getVerticalNeighbours(x,y);
+							break;
+						case Go_Intersection.TURRET_QUADRATURE:
+							neighbours = this.go.model.getNeighbours(x,y);
+							break;
+					}
+					console.log(neighbours);
+					
+					
 					console.log('is a turret');
 					var shooter = this.go.model.getIntersection(x,y).getOwner();
-					this.go.model.getNeighbours(x,y).forEach(function(neighbour){
+					console.log(x + ' ' + y + ' ' + this.go.model.getIntersection(x,y).getType());
+					neighbours.forEach(function(neighbour){
 						console.log('neiiigh');
 						if (!neighbour.isEmpty() && neighbour.getOwner() != shooter)
 						{
