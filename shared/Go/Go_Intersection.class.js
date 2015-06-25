@@ -56,7 +56,7 @@ var Go_Intersection = dejavu.Class.declare({
 		switch(this.type)
 		{
 			case this.$self.STONE_NORMAL:
-				this.HP = 4;
+				this.HP = 100;
 				console.log('hoe');
 				break;
         	case this.$self.STONE_TURRET4:
@@ -66,14 +66,14 @@ var Go_Intersection = dejavu.Class.declare({
 			case this.$self.TURRET_UNI_RIGHT:
 			case this.$self.TURRET_UNI_DOWN:
 			case this.$self.TURRET_UNI_LEFT:
-				this.HP = 3;
+				this.HP = 75;
 				break;
 			case this.$self.TURRET_DUO_HORIZONTAL:
 			case this.$self.TURRET_DUO_VERTICAL:
-				this.HP = 2;
+				this.HP = 50;
 				break;
 			case this.$self.TURRET_QUADRATURE:
-				this.HP = 1;
+				this.HP = 25;
 				break;
 			default:
 				alert('Type inconnu in setOwner Intersection');
@@ -96,7 +96,7 @@ var Go_Intersection = dejavu.Class.declare({
     },
     
     getHit: function(){
-        this.HP = this.HP-1;   
+        this.HP = this.HP-25;   
         if (this.HP <= 0)
         {
             this._owner = 0;
@@ -105,7 +105,7 @@ var Go_Intersection = dejavu.Class.declare({
     },
 	
 	wouldDieIfItGotHit: function(){
-        return this.HP <= 1;
+        return this.HP <= 25;
     }
 
 

@@ -48,7 +48,7 @@ var Go_View_HTML = dejavu.Class.declare({
 				{
 					if (y < goban.length)
 					{
-						$div.append('<div class="intersections__intersection player'+goban[x][y].getOwner()+' type'+goban[x][y].getType()+'" data-x="'+x+'" data-y="'+y+'" style="width:'+(100/goban.length)+'%;">'+goban[x][y].getType()+'<br/>' +goban[x][y].getHP()+'</div>');
+						$div.append('<div class="intersections__intersection player'+goban[x][y].getOwner()+' type'+goban[x][y].getType()+'" data-x="'+x+'" data-y="'+y+'" style="width:'+(100/goban.length)+'%;">'+this.printSvg(goban[x][y].getType(),goban[x][y].getHP())+'</div>');
 					}
 					$divbg.append('<div class="borders__border"></div>');
 				}
@@ -95,6 +95,10 @@ var Go_View_HTML = dejavu.Class.declare({
 	 */
 	placeStone: function() {
 		this.render();
+	},
+	
+	printSvg: function(type,health) {
+		
 	}
 
 	/*initialize: function(go) {
