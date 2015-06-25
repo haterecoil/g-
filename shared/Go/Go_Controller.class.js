@@ -279,11 +279,13 @@ var Go_Controller = dejavu.Class.declare({
 			// this.go.changeCurrentPlayer();
 		}
 		
+		this.makeTheTurretsShoot();
+		
 		this.go.view.render(); // @todo on sait pas si on render toute la queue ou si le modèle render au fur et à mesure
 		console.log("Joueur suivant ! : " + this.go.currentPlayer);
     
     	// this.recreateShootingIntervals();   
-		this.makeTheTurretsShoot();
+		
         
 	},
 	
@@ -304,7 +306,7 @@ var Go_Controller = dejavu.Class.declare({
 		console.log('in fn iskorama');
 
 		var nbPl = [null, this.go.model.countPlayer(1), this.go.model.countPlayer(2)];
-		nbPl[this.getIntersection(xToR,yToR).getOwner()]--;
+		nbPl[this.go.model.getIntersection(xToR,yToR).getOwner()]--;
 		
 		for (var i = 0; i<this.history.length; i++)
 		{
@@ -317,59 +319,33 @@ var Go_Controller = dejavu.Class.declare({
 	},
 	
 	makeTheTurretsShoot: function() {
-		
-		// normale : 4
-		// 1 direction que tu choisis  3
-		// 2 directions horizontale / verticale 2 
-		// 4 directions 1
-		// les tours ont des pdv différents
-		// 
-		
-		console.log('SHOOTING INTERVALS IGNORED');
-		return;
-		
-        // ça m'a pris 30 minutes, me fais pas une axelade
-        if (this.shootingInterval !== null)
-            clearInterval(this.shootingInterval);
-        var shootingFunctions = [];
+		var that = this;
+       
         for (var x = 0; x<this.go.size; x++)
 		{
 			for (var y = 0; y<this.go.size; y++)
 			{
-
-				if (this.go.model.getIntersection(x,y).getOwner() == this.go.notCurrentPlayer && this.go.model.getIntersection(x,y).getType() == Go_Intersection.STONE_TURRET4)
+				console.log('zoub');
+				if (this.go.model.getIntersection(x,y).isATurret())
                 {
-                    var shootingFunctionGenerator = function(x,y) {
-                        var shooter = this.go.model.getIntersection(x,y).getOwner();
-                        var neighbours = this.go.model.getNeighbours(x,y);
-                        return function() {
-                            
-                                neighbours.forEach(function(neighbour){
-									// J'AIME LE CODE ù.ù
-									// HOURRI \i\
-                                    if (!neighbour.isEmpty() && neighbour.getOwner() != shooter && !this.isKorama(x,y))
-                                        neighbour.getHit();
-                                });
-                            };
-                    };
-                    
-                    shootingFunctions.push(shootingFunctionGenerator(x,y));
-                    
+					console.log('is a turret');
+					var shooter = this.go.model.getIntersection(x,y).getOwner();
+					this.go.model.getNeighbours(x,y).forEach(function(neighbour){
+						console.log('neiiigh');
+						if (!neighbour.isEmpty() && neighbour.getOwner() != shooter)
+						{
+							console.log('aboubouboubou');
+							if (!neighbour.wouldDieIfItGotHit() || !that.isKorama(x,y))
+							{
+								console.log('gada gada gada');
+								neighbour.getHit();
+							}
+						}
+					}); // @todo health
                 }
 			}
 		}
-        //console.log(this.shootingFunctions);
-        var that = this;
-        this.shootingInterval = setInterval( function() {
-         //   console.log(that.shootingFunctions); that.shootingFunctions.forEach(function(fn){ fn(); });
-            
-            for (var i = 0; i<shootingFunctions.length; i++)
-            {
-                
-                shootingFunctions[i]();
-            }
-            that.go.view.render();
-        } , 1000);   
+     
     },
     
     /*recreateShootingIntervals: function() {
