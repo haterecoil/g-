@@ -183,9 +183,65 @@ var Go_Model_Standard = dejavu.Class.declare({
 	},
 	
 	placeStone : function(x,y,type) {
-		this.goban[x][y].setOwner(this.go.currentPlayer).setType(type);	
+		switch(type)
+		{
+			case Go_Intersection.STONE_NORMAL:
+				break;
+        	case Go_Intersection.STONE_TURRET4:
+				alert('Obsolete TURRET4 in setOwner');
+				break;
+			case Go_Intersection.TURRET_UNI_UP:
+			case Go_Intersection.TURRET_UNI_RIGHT:
+			case Go_Intersection.TURRET_UNI_DOWN:
+			case Go_Intersection.TURRET_UNI_LEFT:
+				if (this.go.turretsLeft[this.go.currentPlayer-1].UNI <= 0)
+					return false;
+				this.go.turretsLeft[this.go.currentPlayer-1].UNI--;
+				break;
+			case Go_Intersection.TURRET_DUO_HORIZONTAL:
+			case Go_Intersection.TURRET_DUO_VERTICAL:
+				if (this.go.turretsLeft[this.go.currentPlayer-1].DUO <= 0)
+					return false;
+				this.go.turretsLeft[this.go.currentPlayer-1].DUO--;
+				break;
+			case Go_Intersection.TURRET_QUADRATURE:
+				if (this.go.turretsLeft[this.go.currentPlayer-1].QUADRATURE <= 0)
+					return false;
+				this.go.turretsLeft[this.go.currentPlayer-1].QUADRATURE--;
+				break;
+			default:
+				alert('Type inconnu in setOwnerx');
+		}
+		
+		this.goban[x][y].setOwner(this.go.currentPlayer).setType(type);
+		
+		return true;
 	},
 	removeStone : function(x,y) {
+		switch(this.goban[x][y].getType())
+		{
+			case Go_Intersection.STONE_NORMAL:
+				break;
+        	case Go_Intersection.STONE_TURRET4:
+				alert('Obsolete TURRET4 in setOwner');
+				break;
+			case Go_Intersection.TURRET_UNI_UP:
+			case Go_Intersection.TURRET_UNI_RIGHT:
+			case Go_Intersection.TURRET_UNI_DOWN:
+			case Go_Intersection.TURRET_UNI_LEFT:
+				this.go.turretsLeft[this.go.currentPlayer-1].UNI++;
+				break;
+			case Go_Intersection.TURRET_DUO_HORIZONTAL:
+			case Go_Intersection.TURRET_DUO_VERTICAL:
+				this.go.turretsLeft[this.go.currentPlayer-1].DUO++;
+				break;
+			case Go_Intersection.TURRET_QUADRATURE:
+				this.go.turretsLeft[this.go.currentPlayer-1].QUADRATURE++;
+				break;
+			default:
+				alert('Type inconnu in setOwner');
+		}
+		
 		this.goban[x][y].removeStone();	
 	},
 	

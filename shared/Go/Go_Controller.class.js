@@ -63,7 +63,7 @@ var Go_Controller = dejavu.Class.declare({
 			//save game state
 			this.go.model.gobanClone = this.go.model.getSerializedGobanWithHp();
 			//place stone
-			this.go.model.placeStone(x, y, type);
+			if (this.go.model.placeStone(x, y, type) === false) return false;
 
 			// @todo ce ko est inutile ?
 			// if (this.isKo())

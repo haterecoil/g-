@@ -65,6 +65,11 @@ var Go_View_HTML = dejavu.Class.declare({
 		$('.borders__border').css('width', $('.intersections__intersection').width());
 		$('.borders__border').css({ top: -$('.borders__border').eq(0).height()/2,
 								    left: -$('.borders__border').eq(0).width()/2 });
+		
+		
+		$('.uni').text(this.go.turretsLeft[this.go.currentPlayer-1].UNI);
+		$('.duo').text(this.go.turretsLeft[this.go.currentPlayer-1].DUO);
+		$('.quadrature').text(this.go.turretsLeft[this.go.currentPlayer-1].QUADRATURE);
 
 		this.setListeners();
 		console.log('rendered');

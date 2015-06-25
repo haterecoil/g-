@@ -52,11 +52,12 @@ var Go_Intersection = dejavu.Class.declare({
     setType: function(type) {
 		if (this.type == this.$self.STONE_TURRET4) alert('Obsolete setType');
         this.type = type;
-		
+
 		switch(this.type)
 		{
 			case this.$self.STONE_NORMAL:
 				this.HP = 4;
+				console.log('hoe');
 				break;
         	case this.$self.STONE_TURRET4:
 				alert('Obsolete TURRET4 in setOwner');
@@ -75,7 +76,7 @@ var Go_Intersection = dejavu.Class.declare({
 				this.HP = 1;
 				break;
 			default:
-				alert('Type inconnu in setOwner');
+				alert('Type inconnu in setOwner Intersection');
 		}
 		
         return this;
